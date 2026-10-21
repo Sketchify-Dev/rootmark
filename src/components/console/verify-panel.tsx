@@ -32,7 +32,8 @@ export function VerifyPanel({
    * display of whatever the server said.
    */
   const recomputed = useMemo(() => {
-    if (!proof || !event || proof.proof.length === 0) return null;
+    // A batch of one record has an empty path, and the leaf is then the root.
+    if (!proof || !event) return null;
     try {
       return applyProof(proof.leaf, proof.proof);
     } catch {
@@ -142,7 +143,8 @@ export function VerifyPanel({
               <p className="label">Merkle path</p>
               {proof.proof.length === 0 ? (
                 <p className="mt-1 text-[12px] text-muted">
-                  This record is not part of an anchored batch yet.
+                  This batch holds a single record, so the path is empty and the leaf is the
+                  root.
                 </p>
               ) : (
                 <ol className="mt-1 flex flex-col gap-1">

@@ -234,12 +234,15 @@ export async function health(): Promise<HealthReport> {
   const anchors = anchorCounts();
   const signerConfigured = Boolean(process.env.PORTALDOT_MNEMONIC);
 
+  // The live head is a convenience. When the node is slow, fall back to the last block the
+  // indexer reached, so the header still tells the truth.
   let evmHead: number | null = null;
   try {
     const { getBlockNumber } = await import("../chain/evm");
     evmHead = await getBlockNumber();
   } catch {
-    evmHead = null;
+    const stored = getMeta("evm_head");
+    evmHead = stored === null ? null : Number(stored);
   }
 
   const wasmHeadRaw = getMeta("wasm_head");

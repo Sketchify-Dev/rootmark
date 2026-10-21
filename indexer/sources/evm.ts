@@ -11,11 +11,22 @@ import type { NewEvent } from "../../src/lib/db";
  */
 
 const rpc = async <T>(method: string, params: unknown[] = []): Promise<T> => {
-  const response = await fetch(EVM_RPC, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
-  });
+  let response: Response | undefined;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      response = await fetch(EVM_RPC, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+        signal: AbortSignal.timeout(15_000),
+      });
+      break;
+    } catch (error) {
+      if (attempt === 2) throw error;
+      await new Promise((wait) => setTimeout(wait, 800 * (attempt + 1)));
+    }
+  }
+  if (!response) throw new Error(`EVM RPC ${method} could not be reached`);
   if (!response.ok) throw new Error(`EVM RPC ${method} returned HTTP ${response.status}`);
   const body = (await response.json()) as { result?: T; error?: { message: string } };
   if (body.error) throw new Error(`EVM RPC ${method}: ${body.error.message}`);

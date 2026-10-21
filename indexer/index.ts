@@ -127,17 +127,29 @@ async function main(): Promise<void> {
   process.on("SIGTERM", stop);
 
   while (running) {
+    // Each source is isolated, so a flaky endpoint on one side never stops the other.
+    let indexedEvm = 0;
+    let indexedWasm = 0;
     try {
-      const indexedEvm = await indexEvm(evm);
-      const indexedWasm = wasm ? await indexWasm(wasm) : 0;
-      setMeta("last_indexed_at", String(Math.floor(Date.now() / 1000)));
-      if (indexedEvm + indexedWasm > 0) {
-        log(`indexed ${indexedEvm} evm and ${indexedWasm} wasm records`);
-      }
-      await flushBatch(evmWriter, wasmWriter);
-      if (wasm) setMeta("wasm_head", String(await wasm.head()));
+      indexedEvm = await indexEvm(evm);
     } catch (error) {
-      log(`tick failed: ${error instanceof Error ? error.message : String(error)}`);
+      log(`evm source failed: ${error instanceof Error ? error.message : String(error)}`);
+    }
+    if (wasm) {
+      try {
+        indexedWasm = await indexWasm(wasm);
+      } catch (error) {
+        log(`wasm source failed: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
+    setMeta("last_indexed_at", String(Math.floor(Date.now() / 1000)));
+    if (indexedEvm + indexedWasm > 0) {
+      log(`indexed ${indexedEvm} evm and ${indexedWasm} wasm records`);
+    }
+    try {
+      await flushBatch(evmWriter, wasmWriter);
+    } catch (error) {
+      log(`batching failed: ${error instanceof Error ? error.message : String(error)}`);
     }
     await new Promise((resolveTick) => setTimeout(resolveTick, TICK_MS));
   }
