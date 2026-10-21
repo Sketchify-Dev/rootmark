@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="720" viewBox="0 0 1180 720" font-family="Inter, Helvetica, Arial, sans-serif">
+  <rect width="1180" height="720" fill="#ffffff"/>
+
+  <text x="40" y="46" font-size="22" font-weight="600" fill="#14181f">PortalIndex architecture</text>
+  <text x="40" y="70" font-size="13" fill="#616a78">Verifiable data and query middleware for the Portaldot V3 chain, chain id 420420777</text>
+
+  <!-- Chain boundary -->
+  <rect x="40" y="96" width="1100" height="150" rx="6" fill="#f7f8fa" stroke="#e3e6eb"/>
+  <text x="58" y="122" font-size="12" font-weight="500" letter-spacing="0.06em" fill="#616a78">PORTALDOT V3 TESTNET</text>
+
+  <rect x="64" y="140" width="480" height="84" rx="4" fill="#ffffff" stroke="#e3e6eb"/>
+  <text x="84" y="168" font-size="14" font-weight="600" fill="#14181f">EVM endpoint</text>
+  <text x="84" y="190" font-size="12" fill="#616a78" font-family="IBM Plex Mono, monospace">test-evm-rpc-v3.portaldot.dev</text>
+  <text x="84" y="208" font-size="12" fill="#616a78">Solidity contracts, logs, receipts</text>
+
+  <rect x="596" y="140" width="480" height="84" rx="4" fill="#ffffff" stroke="#e3e6eb"/>
+  <text x="616" y="168" font-size="14" font-weight="600" fill="#14181f">Substrate node</text>
+  <text x="616" y="190" font-size="12" fill="#616a78" font-family="IBM Plex Mono, monospace">test-node-v3.portaldot.dev</text>
+  <text x="616" y="208" font-size="12" fill="#616a78">ink! contracts, typed pallet events</text>
+
+  <!-- arrows down to indexer -->
+  <path d="M304 224 L304 268" stroke="#c9ced6" stroke-width="1.5" fill="none"/>
+  <path d="M836 224 L836 268" stroke="#c9ced6" stroke-width="1.5" fill="none"/>
+  <path d="M304 262 L312 254 M304 262 L296 254" stroke="#c9ced6" stroke-width="1.5" fill="none"/>
+  <path d="M836 262 L844 254 M836 262 L828 254" stroke="#c9ced6" stroke-width="1.5" fill="none"/>
+  <text x="316" y="252" font-size="11" fill="#616a78" font-family="IBM Plex Mono, monospace">eth_getBlockByNumber</text>
+  <text x="700" y="252" font-size="11" fill="#616a78" font-family="IBM Plex Mono, monospace">system.events</text>
+
+  <!-- indexer -->
+  <rect x="300" y="272" width="540" height="96" rx="6" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="322" y="300" font-size="14" font-weight="600" fill="#14181f">Indexer</text>
+  <text x="322" y="322" font-size="12" fill="#616a78">Normalises both environments into one record shape</text>
+  <text x="322" y="342" font-size="12" fill="#616a78" font-family="IBM Plex Mono, monospace">{ vm, block, tx, contract, event, args, leaf }</text>
+  <text x="322" y="360" font-size="11" fill="#616a78">keccak256 of the canonical record becomes the Merkle leaf</text>
+
+  <!-- storage and anchors -->
+  <path d="M440 368 L440 410" stroke="#c9ced6" stroke-width="1.5" fill="none"/>
+  <path d="M700 368 L700 410" stroke="#c9ced6" stroke-width="1.5" fill="none"/>
+  <path d="M440 404 L448 396 M440 404 L432 396" stroke="#c9ced6" stroke-width="1.5" fill="none"/>
+  <path d="M700 404 L708 396 M700 404 L692 396" stroke="#c9ced6" stroke-width="1.5" fill="none"/>
+
+  <rect x="300" y="414" width="280" height="72" rx="4" fill="#ffffff" stroke="#e3e6eb"/>
+  <text x="320" y="442" font-size="14" font-weight="600" fill="#14181f">SQLite</text>
+  <text x="320" y="462" font-size="12" fill="#616a78">indexed records and</text>
+  <text x="320" y="478" font-size="12" fill="#616a78">anchored batches</text>
+
+  <rect x="620" y="414" width="280" height="72" rx="4" fill="#ffffff" stroke="#e3e6eb"/>
+  <text x="640" y="442" font-size="14" font-weight="600" fill="#14181f">Batching</text>
+  <text x="640" y="462" font-size="12" fill="#616a78">Merkle root per batch,</text>
+  <text x="640" y="478" font-size="12" fill="#616a78">committed on chain</text>
+
+  <!-- anchor contracts -->
+  <path d="M760 486 L760 524" stroke="#c9ced6" stroke-width="1.5" fill="none"/>
+  <path d="M760 518 L768 510 M760 518 L752 510" stroke="#c9ced6" stroke-width="1.5" fill="none"/>
+  <text x="772" y="506" font-size="11" fill="#616a78" font-family="IBM Plex Mono, monospace">anchor(root, count)</text>
+
+  <rect x="480" y="528" width="560" height="80" rx="4" fill="#ffffff" stroke="#e3e6eb"/>
+  <text x="500" y="556" font-size="14" font-weight="600" fill="#14181f">Anchor contracts</text>
+  <text x="500" y="578" font-size="12" fill="#616a78">PortalAnchor.sol on the EVM side, anchor.ink on the ink! side</text>
+  <text x="500" y="596" font-size="12" fill="#616a78">One 32 byte root per batch. A batch id can only be claimed once.</text>
+
+  <!-- console -->
+  <path d="M440 486 L440 640" stroke="#c9ced6" stroke-width="1.5" fill="none"/>
+  <path d="M760 608 L760 640" stroke="#c9ced6" stroke-width="1.5" fill="none"/>
+  <path d="M440 634 L448 626 M440 634 L432 626" stroke="#c9ced6" stroke-width="1.5" fill="none"/>
+  <path d="M760 634 L768 626 M760 634 L752 626" stroke="#c9ced6" stroke-width="1.5" fill="none"/>
+
+  <rect x="220" y="640" width="440" height="56" rx="4" fill="#ffffff" stroke="#e3e6eb"/>
+  <text x="240" y="666" font-size="14" font-weight="600" fill="#14181f">Console and API</text>
+  <text x="240" y="686" font-size="12" fill="#616a78">query, inspect, verify</text>
+
+  <rect x="700" y="640" width="340" height="56" rx="4" fill="#eef3fe" stroke="#bcd0fb"/>
+  <text x="720" y="666" font-size="14" font-weight="600" fill="#2563eb">Verification</text>
+  <text x="720" y="686" font-size="12" fill="#14181f">root rebuilt in the browser, compared with contract storage</text>
+
+  <text x="40" y="700" font-size="11" fill="#616a78">A reader never has to trust the index: the proof is checked against state the chain holds.</text>
+</svg>
