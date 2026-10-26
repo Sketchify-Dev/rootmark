@@ -5,7 +5,7 @@
  *
  * The EVM side of Portaldot V3 commits batch roots through the Solidity contract. This ink!
  * contract is the same idea expressed for the ink!/WASM side, so a reader can check that
- * PortalIndex really indexes both execution environments of the same chain rather than
+ * Rootmark really indexes both execution environments of the same chain rather than
  * claiming it in a slide.
  */
 #[ink::contract]

@@ -17,9 +17,13 @@ export interface Deployments {
     deployer: string;
     deployedAt: number;
   };
+  /** Other contracts whose events the indexer should decode by name. */
+  contracts?: Record<string, { address: string; txHash?: string; blockNumber?: number }>;
 }
 
-export const DEPLOYMENTS_PATH = resolve(process.cwd(), "contracts/deployments.json");
+export const DEPLOYMENTS_PATH = resolve(
+  process.env.PORTALIDX_DEPLOYMENTS ?? resolve(process.cwd(), "contracts/deployments.json"),
+);
 
 /** Read the deployment record written by the deploy scripts. Missing file is not an error. */
 export function readDeployments(): Deployments | null {

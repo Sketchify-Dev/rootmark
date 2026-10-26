@@ -44,7 +44,7 @@ export function ResultsTable({
 }) {
   if (status === "loading" && items.length === 0) {
     return (
-      <div className="rounded-[var(--radius-panel)] border border-line bg-surface">
+      <div className="rm-app-card overflow-hidden">
         <TableSkeleton rows={8} columns={7} />
       </div>
     );
@@ -52,7 +52,7 @@ export function ResultsTable({
 
   if (status === "error") {
     return (
-      <div className="rounded-[var(--radius-panel)] border border-line bg-surface">
+      <div className="rm-app-card overflow-hidden">
         <ErrorState
           title="The query failed"
           message={error ?? "The index could not be read."}
@@ -64,7 +64,7 @@ export function ResultsTable({
 
   if (items.length === 0) {
     return (
-      <div className="rounded-[var(--radius-panel)] border border-line bg-surface">
+      <div className="rm-app-card overflow-hidden">
         <EmptyState
           title={hasFilters ? "No records match these filters" : "No records indexed yet"}
           description={
@@ -85,7 +85,7 @@ export function ResultsTable({
   }
 
   return (
-    <div className="rounded-[var(--radius-panel)] border border-line bg-surface">
+    <div className="rm-app-card overflow-hidden">
       <div className="flex items-center justify-between gap-2 border-b border-line px-3 py-2">
         <p className="text-[12px] text-muted">
           <span className="tnum text-ink">{items.length.toLocaleString("en-US")}</span> of{" "}
@@ -133,9 +133,11 @@ export function ResultsTable({
                   size="sm"
                   variant={selected ? "primary" : "secondary"}
                   onClick={() => onVerify(record)}
+                  aria-pressed={selected}
                   aria-label={`Verify record ${record.id} from block ${record.blockNumber}`}
+                  loading={selected && status === "loading"}
                 >
-                  {selected ? "Verifying" : "Verify"}
+                  {selected ? "Shown" : "Verify"}
                 </Button>
               </td>
             </tr>

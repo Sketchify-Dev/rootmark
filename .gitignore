@@ -40,7 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# PortalIndex
+# Rootmark local data
 /data/
 .env
 .env.local
@@ -52,3 +52,13 @@ contracts/wasm/anchor/Cargo.lock
 # Playwright
 test-results/
 playwright-report/
+
+# taste skill working files
+.taste-skill/
+
+# local secrets and live state — never commit
+*.db
+*.db-wal
+*.db-shm
+.env
+.env.local

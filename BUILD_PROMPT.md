@@ -1,4 +1,4 @@
-# BUILD PROMPT: PortalIndex (Portaldot Hacker House 2026)
+# BUILD PROMPT: Rootmark (Portaldot Hacker House 2026)
 
 Paste everything below into Claude Code, with the working directory set to `/home/sketchify/portaldot`.
 
@@ -87,12 +87,12 @@ Tooling in this environment:
 
 ## 3. What we are building
 
-**PortalIndex: a verifiable data and query middleware for Portaldot V3.**
+**Rootmark: a verifiable data and query middleware for Portaldot V3.**
 
 Portaldot V3 runs the same chain in two execution environments, ink!/WASM and EVM. That is a
 genuine advantage and a genuine problem: every consumer of the chain has to trust somebody's
 indexer, because the two VMs expose different event models and there is no way to check an
-index against chain state. PortalIndex indexes both environments, normalizes them into one
+index against chain state. Rootmark indexes both environments, normalizes them into one
 record shape, serves them through a query API, and anchors a Merkle root of every indexed
 batch on chain. A consumer can then fetch a query result together with its Merkle proof and
 check it against the root stored in contract storage, so the indexer cannot quietly serve

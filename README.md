@@ -1,4 +1,4 @@
-# PortalIndex
+# Rootmark
 
 Verifiable data and query middleware for the Portaldot V3 chain.
 
@@ -8,7 +8,7 @@ choice, and it hands every consumer of the chain a problem: the two environments
 different event models, there is no shared index, and an application that reads the chain
 through somebody's indexer has no way to check what it is told.
 
-PortalIndex indexes both environments into one record shape, serves them through a query API,
+Rootmark indexes both environments into one record shape, serves them through a query API,
 and commits a Merkle root of every batch of records on chain. A reader can fetch a result with
 its Merkle path, rebuild the root in their own process, and compare it with the root the
 anchor contract holds. If the indexer invents a record, the proof fails.
@@ -29,7 +29,7 @@ Built for the Portaldot Hacker House 2026, track 1, Modular Cloud and Middleware
 
 ## Architecture
 
-![PortalIndex architecture](docs/architecture.svg)
+![Rootmark architecture](docs/architecture.svg)
 
 The same picture in text, for reading in a terminal:
 
@@ -130,10 +130,17 @@ PORTALDOT_MNEMONIC="..." npm run indexer
 
 ### Deployed addresses
 
+Live on the Portaldot V3 testnet, chain 420420777.
+
 | Chain | Contract | Address | Transaction |
 |---|---|---|---|
-| Portaldot V3 testnet, EVM | `PortalAnchor` | see `contracts/deployments.json` | see `contracts/deployments.json` |
-| Portaldot V3 testnet, WASM | `anchor` | see `contracts/deployments.json` | see `contracts/deployments.json` |
+| Portaldot V3 testnet, EVM | `PortalAnchor` | `0x92B79C5cD9CC8235e3e2718a739BE825e2bd5430` | `0x6e33aa2d09f1a32b076df8297529e8cf87f57bb9a777570ed2624ec9e822a923` (block 204392) |
+| Portaldot V3 testnet, EVM | `Emitter` (test events) | `0x178B9ED9dB766d2ecda393ca0b780A643a12C31E` | `0x618ca3df675f64d0cf4cecfdc9a807c9df01031ed4a73dcf6c410720d2b759e2` (block 204668) |
+| Portaldot V3 testnet, WASM | `anchor` | not yet deployed | deploy with `npm run deploy:wasm` once the native account is funded |
+
+First anchored batch on V3: batch `0xa66a83386557...` root `0x624facad0b15...` covering 3 Ping records (blocks 204669 to 204672), anchor tx `0xf1cbeeb2352b60be23ae01497fd666eaf15e63139947a44a119c5602a26b6cc8` (block 204768). Verify any of records 11 to 13 at `GET /api/v1/proof/:id`; each returns `anchorStatus: anchored`, `onChainRootSource: contract-storage`, `verified: true`.
+
+`contracts/deployments.json` is gitignored as live state; the addresses above are the public record. Reward payout address for this deployment: `5FjPSC5abXRfgNyNUQ5bQPiQC48mhk8PND7TCQovrdB1PpHt` (native sr25519).
 
 The fastest path from a fresh clone to a deployed setup is:
 
@@ -171,7 +178,7 @@ npm run verify:proof -- 42
 ## Tests
 
 ```bash
-npm test        # 33 unit tests: leaf hashing, Merkle proofs, address mapping, query validation
+npm test        # 38 unit tests: leaf hashing, Merkle proofs, address mapping, query validation
 npm run typecheck
 npm run lint
 npm run build
@@ -180,7 +187,8 @@ npm run build
 ## Repository layout
 
 ```
-app/                    Next.js routes: console, anchors, contracts, /api/v1
+app/                    Next.js routes: landing (/), console, anchors, contracts, /api/v1
+src/landing/            landing page (own visual world, shared proof data)
 src/lib/                proof, hashing, database, chain clients, query services
 src/components/         design system primitives and the console
 indexer/                the indexer and its two chain sources

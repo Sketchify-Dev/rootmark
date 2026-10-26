@@ -11,7 +11,9 @@ import { fundingAddressForEvm } from "../src/lib/address.ts";
 const RPC = process.env.PORTALIDX_EVM_RPC ?? "https://test-evm-rpc-v3.portaldot.dev";
 const CHAIN_ID = 420420777;
 const root = resolve(import.meta.dirname, "..");
-const deploymentPath = resolve(root, "contracts/deployments.json");
+const deploymentPath = resolve(
+  process.env.PORTALIDX_DEPLOYMENTS ?? resolve(root, "contracts/deployments.json"),
+);
 
 const mnemonic = process.env.PORTALDOT_MNEMONIC?.trim();
 const privateKey = process.env.PORTALDOT_PRIVATE_KEY?.trim();

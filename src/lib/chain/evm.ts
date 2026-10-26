@@ -15,28 +15,63 @@ export interface JsonRpcResponse<T> {
   error?: { code: number; message: string; data?: unknown };
 }
 
-/** The header reads chain state, so it must fail fast rather than hang. */
-const RPC_TIMEOUT_MS = Number(process.env.PORTALIDX_RPC_TIMEOUT_MS ?? 8000);
+/** Chain reads retry because V3 fluctuates between fast and timed out. */
+const RPC_TIMEOUT_MS = Number(process.env.PORTALIDX_RPC_TIMEOUT_MS ?? 60000);
 
 let requestId = 0;
 
-export async function rpc<T>(method: string, params: unknown[] = []): Promise<T> {
-  requestId += 1;
-  const response = await fetch(EVM_RPC, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: requestId, method, params }),
-    cache: "no-store",
-    signal: AbortSignal.timeout(RPC_TIMEOUT_MS),
-  });
-  if (!response.ok) {
-    throw new Error(`EVM RPC ${method} failed with HTTP ${response.status}`);
-  }
-  const body = (await response.json()) as JsonRpcResponse<T>;
+async function curlRpc<T>(method: string, params: unknown[], id: number): Promise<T> {
+  const { execFile } = await import("node:child_process");
+  const { promisify } = await import("node:util");
+  const run = promisify(execFile);
+  const timeoutSec = Math.max(5, Math.ceil(RPC_TIMEOUT_MS / 1000));
+  const payload = JSON.stringify({ jsonrpc: "2.0", id, method, params });
+  const { stdout } = await run(
+    "curl",
+    ["-s", "-m", String(timeoutSec), "--ipv4", "-X", "POST", EVM_RPC, "-H", "Content-Type: application/json", "-d", payload],
+    { maxBuffer: 4 * 1024 * 1024 },
+  );
+  const body = JSON.parse(stdout) as JsonRpcResponse<T>;
   if (body.error) {
     throw new Error(`EVM RPC ${method} failed: ${body.error.message}`);
   }
   return body.result as T;
+}
+
+export async function rpc<T>(method: string, params: unknown[] = []): Promise<T> {
+  let lastError: unknown = null;
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    try {
+      requestId += 1;
+      const response = await fetch(EVM_RPC, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: requestId, method, params }),
+        cache: "no-store",
+        signal: AbortSignal.timeout(RPC_TIMEOUT_MS),
+      });
+      if (!response.ok) {
+        throw new Error(`EVM RPC ${method} failed with HTTP ${response.status}`);
+      }
+      const body = (await response.json()) as JsonRpcResponse<T>;
+      if (body.error) {
+        throw new Error(`EVM RPC ${method} failed: ${body.error.message}`);
+      }
+      return body.result as T;
+    } catch (error) {
+      lastError = error;
+      // Node fetch in this sandbox tries IPv6 first and stalls on Cloudflare; curl with
+      // --ipv4 succeeds in ~3s, so fall back to it before retrying the slow path.
+      try {
+        requestId += 1;
+        return await curlRpc<T>(method, params, requestId);
+      } catch (curlError) {
+        lastError = curlError;
+      }
+      await new Promise((wait) => setTimeout(wait, 1200 * (attempt + 1)));
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error(`EVM RPC ${method} failed`);
 }
 
 export async function getChainId(): Promise<number> {

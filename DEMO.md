@@ -8,7 +8,7 @@ order, with the console on screen.
 > Portaldot V3 runs the same chain in two execution environments. ink! contracts through
 > pallet_contracts, Solidity through the EVM endpoint. Every consumer of the chain has to
 > trust somebody's indexer, because the two VMs expose different event models and there is
-> no way to check an index against chain state. PortalIndex is a data and query middleware
+> no way to check an index against chain state. Rootmark is a data and query middleware
 > that indexes both, and commits a Merkle root of every batch on chain so any result can be
 > verified.
 

@@ -43,10 +43,10 @@ export function VerifyPanel({
 
   if (!event) {
     return (
-      <aside className="rounded-[var(--radius-panel)] border border-line bg-surface p-3">
+      <aside className="rm-app-card p-4">
         <h2 className="text-[14px] font-semibold text-ink">Verification</h2>
         <p className="mt-1 text-[13px] leading-[1.45] text-muted">
-          Select a record and choose Verify. PortalIndex rebuilds the Merkle path, recomputes
+          Select a record and choose Verify. Rootmark rebuilds the Merkle path, recomputes
           the root in this tab, and compares it with the root the anchor contract stores.
         </p>
       </aside>
@@ -55,6 +55,9 @@ export function VerifyPanel({
 
   const rootMatches =
     recomputed && proof ? recomputed.toLowerCase() === proof.root.toLowerCase() : null;
+  // An unanchored batch has nothing on chain to disagree with. Its rows render neutral:
+  // red is reserved for a root that was checked and failed.
+  const isUnanchored = proof ? proof.anchorStatus !== "anchored" : false;
   const chainMatches =
     proof?.onChainRoot && proof.root
       ? proof.onChainRoot.toLowerCase() === proof.root.toLowerCase()
@@ -62,7 +65,7 @@ export function VerifyPanel({
 
   return (
     <aside
-      className="rounded-[var(--radius-panel)] border border-line bg-surface"
+      className="rm-app-card overflow-hidden"
       aria-live="polite"
     >
       <header className="flex items-start justify-between gap-2 border-b border-line px-3 py-2">
@@ -114,12 +117,12 @@ export function VerifyPanel({
               <ProofRow
                 label="Recomputed root in this tab"
                 value={recomputed ?? "not computed"}
-                tone={rootMatches === false ? "danger" : "neutral"}
+                tone={rootMatches === false && !isUnanchored ? "danger" : "neutral"}
               />
               <ProofRow
-                label="Anchored root"
+                label={proof.anchorStatus === "anchored" ? "Anchored root" : "Batch root (computed)"}
                 value={proof.root}
-                tone={rootMatches === false ? "danger" : "neutral"}
+                tone={rootMatches === false && !isUnanchored ? "danger" : "neutral"}
               />
               <ProofRow
                 label={
@@ -131,11 +134,9 @@ export function VerifyPanel({
                 }
                 value={
                   proof.onChainRoot ??
-                  (proof.anchorStatus === "anchored"
-                    ? "no contract configured"
-                    : "this batch is not anchored yet")
+                  (proof.anchorStatus === "anchored" ? "no contract configured" : "-")
                 }
-                tone={chainMatches === false ? "danger" : "neutral"}
+                tone={chainMatches === false && !isUnanchored ? "danger" : "neutral"}
               />
             </div>
 
@@ -218,7 +219,7 @@ function ProofRow({
   tone?: "neutral" | "danger";
 }) {
   return (
-    <div className="flex flex-col gap-0.5">
+    <div className="rm-verify-step flex flex-col gap-0.5">
       <div className="flex items-center justify-between gap-2">
         <span className="text-[12px] text-muted">{label}</span>
         {value.startsWith("0x") ? <CopyButton value={value} /> : null}

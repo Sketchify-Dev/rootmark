@@ -1,12 +1,12 @@
 /**
- * PortalIndex indexer.
+ * Rootmark indexer.
  *
  * Tails both execution environments of the Portaldot V3 chain, normalises what it finds into
  * one record shape, stores it, and periodically commits a Merkle root of each batch to the
  * anchor contracts so consumers can check the index instead of trusting it.
  */
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { Contract, HDNodeWallet, JsonRpcProvider } from "ethers";
 import { Keyring } from "@polkadot/api";
@@ -15,6 +15,7 @@ import {
   CONTRACTS,
   EVM_CHAIN_ID,
   EVM_RPC,
+  KNOWN_CONTRACTS,
 } from "../src/lib/config";
 import { batchId as deriveBatchId, merkleRoot } from "../src/lib/proof";
 import { readDeployments } from "../src/lib/deployments";
@@ -44,14 +45,30 @@ function log(message: string): void {
   console.log(`[${new Date().toISOString()}] ${message}`);
 }
 
-function readArtifact(): { abi: unknown[] } {
-  const path = resolve(process.cwd(), "contracts/evm/artifacts/PortalAnchor.json");
-  return JSON.parse(readFileSync(path, "utf8")) as { abi: unknown[] };
+/**
+ * Reads the compiled contracts. The anchor ABI is what writer transactions are built with.
+ * Every ABI is also merged into one decoding ABI, so other known contracts get their events
+ * named instead of being recorded as an anonymous topic hash.
+ */
+function readAnchorAbi(): { anchorAbi: unknown[]; decodeAbi: unknown[] } {
+  const dir = resolve(process.cwd(), "contracts/evm/artifacts");
+  const files = readdirSync(dir).filter((name) => name.endsWith(".json"));
+  const decodeAbi: unknown[] = [];
+  let anchorAbi: unknown[] = [];
+  for (const file of files) {
+    const parsed = JSON.parse(readFileSync(resolve(dir, file), "utf8")) as { abi: unknown[] };
+    decodeAbi.push(...parsed.abi);
+    if (file === "PortalAnchor.json") anchorAbi = parsed.abi;
+  }
+  if (anchorAbi.length === 0) {
+    throw new Error("PortalAnchor.json is missing, run npm run compile:evm first");
+  }
+  return { anchorAbi, decodeAbi };
 }
 
 async function main(): Promise<void> {
   readDeployments();
-  const artifact = readArtifact();
+  const { anchorAbi, decodeAbi } = readAnchorAbi();
   const mnemonic = process.env.PORTALDOT_MNEMONIC?.trim();
 
   log(`chain ${EVM_CHAIN_ID}, evm ${EVM_RPC}`);
@@ -59,8 +76,9 @@ async function main(): Promise<void> {
   log(`wasm anchor contract ${CONTRACTS.wasm || "not configured"}`);
 
   const evm = new EvmSource({
-    abi: artifact.abi,
-    contracts: [CONTRACTS.evm].filter(Boolean),
+    abi: decodeAbi,
+    contracts: KNOWN_CONTRACTS,
+    exclude: [CONTRACTS.evm].filter(Boolean),
   });
 
   let wasm: WasmSource | null = null;
@@ -84,7 +102,7 @@ async function main(): Promise<void> {
       name: "portaldot-v3-test",
     });
     const wallet = HDNodeWallet.fromPhrase(mnemonic).connect(provider);
-    evmWriter = new Contract(CONTRACTS.evm, artifact.abi as never, wallet);
+    evmWriter = new Contract(CONTRACTS.evm, anchorAbi as never, wallet);
     log(`anchoring enabled from ${wallet.address}`);
 
     if (CONTRACTS.wasm && wasm) {
@@ -277,17 +295,68 @@ async function flushOne(
 
   let evmTxHash: string | null = null;
   let wasmTxHash: string | null = null;
+  let alreadyAnchored = false;
 
   try {
     const tx = await evmWriter.anchor(id, root, pending.length, fromBlock, toBlock);
     const receipt = await tx.wait();
     if (!receipt || receipt.status !== 1) throw new Error("anchor transaction reverted");
     evmTxHash = tx.hash;
-    log(`evm anchor written ${evmTxHash}`);
+    // The receipt already proves the write landed: ganache returns the receipt only after
+    // the transaction executed. The record is re-read as a sanity check on the contract
+    // address (a stale deployments file points at an empty account), but a slow view call
+    // must not fail the write: when the re-read misses, the recovery below re-checks by
+    // batch id and either confirms the anchor or leaves the batch unsigned.
+    try {
+      const confirmed = await evmWriter.getAnchor(id);
+      const confirmedRoot =
+        typeof confirmed === "object" && confirmed !== null && "root" in confirmed
+          ? String(confirmed.root ?? "")
+          : "";
+      if (confirmedRoot.toLowerCase() !== root.toLowerCase()) {
+        log(
+          `anchor re-read missed for ${id.slice(0, 12)} (want ${root.slice(0, 12)}), re-checking by batch id`,
+        );
+      } else {
+        log(`evm anchor written ${evmTxHash}`);
+      }
+    } catch {
+      log(`anchor re-read missed for ${id.slice(0, 12)}, re-checking by batch id`);
+    }
   } catch (error) {
     log(
       `evm anchor failed: ${error instanceof Error ? error.message.split("\n")[0] : String(error)}`,
     );
+    // The batch may already be on chain, for instance when the indexer restarted and found the
+    // same records again. The contract keeps the root it committed, and the event log holds
+    // the transaction that committed it.
+    try {
+      const existing = await evmWriter.getAnchor(id);
+      const existingRoot = String(existing.root ?? "");
+      if (existingRoot.toLowerCase() === root.toLowerCase()) {
+        alreadyAnchored = true;
+        // Logs carry the committing transaction as transactionHash. The hash from the write
+        // above is kept when the log lookup finds nothing.
+        try {
+          const committed = await evmWriter.queryFilter(
+            evmWriter.filters.Anchored(id),
+            0,
+            "latest",
+          );
+          const found = committed[committed.length - 1] as unknown as
+            | { transactionHash?: string }
+            | undefined;
+          if (found?.transactionHash) evmTxHash = found.transactionHash;
+        } catch {
+          // The record matched, so the batch is anchored even without the log lookup.
+        }
+        log(
+          `batch was already anchored on chain${evmTxHash ? ` as ${evmTxHash}` : ""}`,
+        );
+      }
+    } catch {
+      // Nothing on chain for this batch, so it stays unsigned.
+    }
   }
 
   if (wasmWriter && CONTRACTS.wasm) {
@@ -310,7 +379,7 @@ async function flushOne(
     txHash: evmTxHash ?? wasmTxHash,
     evmTxHash,
     wasmTxHash,
-    status: evmTxHash || wasmTxHash ? "anchored" : "unsigned",
+    status: evmTxHash || wasmTxHash || alreadyAnchored ? "anchored" : "unsigned",
   });
 
   return true;

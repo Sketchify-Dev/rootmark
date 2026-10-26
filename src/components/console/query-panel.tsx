@@ -102,7 +102,7 @@ export function QueryPanel({
 
   return (
     <form
-      className="rounded-[var(--radius-panel)] border border-line bg-surface p-3"
+      className="rm-app-card p-4"
       onSubmit={(event) => {
         event.preventDefault();
         onRun();

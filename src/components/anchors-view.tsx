@@ -5,19 +5,9 @@ import { Shell } from "@/components/shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState, ErrorState, Skeleton } from "@/components/ui/state";
-import { DataTable } from "@/components/ui/table";
 import { fetchAnchors } from "@/lib/client/api";
 import type { AnchorBatch } from "@/lib/types";
 import { explorerTx, formatBlock, formatRelative, shortHash } from "@/lib/format";
-
-const COLUMNS = [
-  { key: "root", label: "Root" },
-  { key: "count", label: "Records", align: "right" as const, className: "w-[88px]" },
-  { key: "range", label: "Block range", align: "right" as const, className: "w-[150px]" },
-  { key: "tx", label: "Anchor transaction", className: "hidden md:table-cell" },
-  { key: "status", label: "Status", className: "w-[110px]" },
-  { key: "age", label: "Created", align: "right" as const, className: "w-[88px]" },
-];
 
 export function AnchorsView() {
   const [items, setItems] = useState<AnchorBatch[] | null>(null);
@@ -38,99 +28,100 @@ export function AnchorsView() {
     if (mounted.current) return;
     mounted.current = true;
     load();
-    // The first mount performs the initial fetch.
   }, []);
 
   return (
     <Shell>
-      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-3">
-        <header>
-          <h1 className="text-[22px] font-semibold leading-[1.25] tracking-[-0.01em] text-ink">
-            Anchors
-          </h1>
-          <p className="mt-0.5 max-w-2xl text-[13px] leading-[1.45] text-muted">
-            Each row is a batch of indexed records whose Merkle root was committed by the
-            anchor contract. A record is only verifiable once its batch appears here.
-          </p>
+      <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-4">
+        <header className="rm-app-card-dark rm-rise overflow-hidden">
+          <div className="px-4 py-5 sm:px-6 sm:py-6">
+            <p className="rm-app-kicker !text-[rgba(242,236,221,0.6)]">Merkle roots · on chain</p>
+            <h1 className="rm-serif mt-1 text-[clamp(1.6rem,3vw,2.25rem)] font-normal leading-none tracking-[-0.02em]">Anchors</h1>
+            <p className="mt-2 max-w-2xl text-[13px] leading-[1.5] text-[rgba(242,236,221,0.72)]">
+              Each card is a batch of indexed records whose root was committed by the anchor contract. A record is only verifiable once its batch is here.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 border-t border-[rgba(242,236,221,0.12)] bg-[rgba(242,236,221,0.06)] px-4 py-3 text-[12px] sm:px-6">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f2ecdd] px-2.5 py-1 text-[11px] font-semibold tracking-wide text-[#041a55]">
+              {items === null ? "loading" : `${items.length} batches`}
+            </span>
+            <span className="text-[rgba(242,236,221,0.7)]">
+              {items ? `${items.filter((b) => b.status === "anchored").length} anchored · ${items.filter((b) => b.status !== "anchored").length} pending` : "reading chain…"}
+            </span>
+            <span className="ml-auto hidden sm:inline text-[rgba(242,236,221,0.55)]">chain 420420777 · PortalAnchor</span>
+          </div>
         </header>
 
         {error ? (
-          <div className="rounded-[var(--radius-panel)] border border-line bg-surface">
-            <ErrorState message={error} onRetry={load} />
-          </div>
+          <div className="rm-app-card rm-rise"><ErrorState message={error} onRetry={load} /></div>
         ) : items === null ? (
-          <div className="rounded-[var(--radius-panel)] border border-line bg-surface p-3">
+          <div className="rm-app-card rm-rise p-4">
             <div className="space-y-2" role="status" aria-label="Loading anchors">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <Skeleton key={index} className="h-3 w-full" />
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-3 w-full" />
               ))}
               <span className="sr-only">Loading anchors</span>
             </div>
           </div>
         ) : items.length === 0 ? (
-          <div className="rounded-[var(--radius-panel)] border border-line bg-surface">
+          <div className="rm-app-card rm-rise">
             <EmptyState
               title="No batches anchored yet"
-              description="The indexer groups records into batches and commits each Merkle root on chain. Start it with npm run indexer and every full batch will show up here."
+              description="The indexer groups records into batches and commits each Merkle root on chain. With a funded key, every full batch shows up here."
             />
           </div>
         ) : (
-          <div className="rounded-[var(--radius-panel)] border border-line bg-surface">
-            <DataTable columns={COLUMNS}>
-              {items.map((batch) => (
-                <tr key={batch.id}>
-                  <td className="px-2 py-2">
-                    <span className="mono tnum text-[12px] text-ink" title={batch.root}>
-                      {shortHash(batch.root, 14)}
-                    </span>
-                  </td>
-                  <td className="tnum px-2 py-2 text-right text-[12px] text-ink">
-                    {batch.count}
-                  </td>
-                  <td className="tnum whitespace-nowrap px-2 py-2 text-right text-[12px] text-muted">
-                    {formatBlock(batch.fromBlock)} to {formatBlock(batch.toBlock)}
-                  </td>
-                  <td className="hidden px-2 py-2 md:table-cell">
-                    {batch.evmTxHash ? (
-                      <a
-                        href={explorerTx(batch.evmTxHash)}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="mono tnum text-[12px] text-accent underline decoration-[#bcd0fb] underline-offset-2 hover:decoration-accent"
-                      >
-                        {shortHash(batch.evmTxHash, 10)}
-                      </a>
-                    ) : (
-                      <span className="text-[12px] text-muted">not written</span>
-                    )}
-                    {batch.wasmTxHash ? (
-                      <span className="ml-2 mono tnum text-[11px] text-muted">
-                        wasm {shortHash(batch.wasmTxHash, 6)}
-                      </span>
-                    ) : null}
-                  </td>
-                  <td className="px-2 py-2">
-                    {batch.status === "anchored" ? (
-                      <Badge tone="success">Anchored</Badge>
-                    ) : batch.status === "pending" ? (
-                      <Badge tone="warning">Pending</Badge>
-                    ) : (
-                      <Badge tone="neutral">Unsigned</Badge>
-                    )}
-                  </td>
-                  <td className="tnum px-2 py-2 text-right text-[12px] text-muted">
-                    {formatRelative(batch.createdAt)}
-                  </td>
-                </tr>
-              ))}
-            </DataTable>
+          <div className="rm-anchor-grid">
+            {items.map((batch, index) => (
+              <article
+                key={batch.id}
+                className="rm-anchor-card rm-rise"
+                style={{ transitionDelay: `${Math.min(index, 6) * 60}ms` } as React.CSSProperties}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <p className="rm-app-kicker">Batch #{String(batch.id).padStart(2, "0")}</p>
+                  {batch.status === "anchored" ? (
+                    <Badge tone="success">Anchored</Badge>
+                  ) : batch.status === "pending" ? (
+                    <Badge tone="warning">Pending</Badge>
+                  ) : (
+                    <Badge tone="neutral">Unsigned</Badge>
+                  )}
+                </div>
+                <p className="mono tnum mt-2 break-all text-[13px] font-medium leading-[1.4] text-ink" title={batch.root}>
+                  {shortHash(batch.root, 14)}
+                </p>
+                <dl className="mt-3 grid grid-cols-2 gap-2 text-[12px]">
+                  <div>
+                    <dt className="rm-app-kicker">Records</dt>
+                    <dd className="tnum mt-0.5 text-ink">{batch.count}</dd>
+                  </div>
+                  <div>
+                    <dt className="rm-app-kicker">Block range</dt>
+                    <dd className="tnum mt-0.5 text-ink">{formatBlock(batch.fromBlock)} → {formatBlock(batch.toBlock)}</dd>
+                  </div>
+                  <div className="col-span-2">
+                    <dt className="rm-app-kicker">Anchor tx</dt>
+                    <dd className="tnum mt-0.5">
+                      {batch.evmTxHash ? (
+                        <a href={explorerTx(batch.evmTxHash)} target="_blank" rel="noreferrer" className="break-all text-accent underline decoration-[#bcd0fb] underline-offset-2 hover:decoration-accent">
+                          {shortHash(batch.evmTxHash, 12)}
+                        </a>
+                      ) : (
+                        <span className="text-muted">not written</span>
+                      )}
+                      {batch.wasmTxHash ? <span className="ml-2 text-muted">wasm {shortHash(batch.wasmTxHash, 6)}</span> : null}
+                    </dd>
+                  </div>
+                </dl>
+                <p className="tnum mt-3 text-[11px] text-muted">{formatRelative(batch.createdAt)} · {batch.root.slice(0, 10)}…</p>
+              </article>
+            ))}
           </div>
         )}
 
-        <div>
-          <Button variant="secondary" size="sm" onClick={load}>
-            Refresh
-          </Button>
+        <div className="rm-rise">
+          <Button variant="secondary" size="sm" onClick={load}>Refresh</Button>
         </div>
       </div>
     </Shell>

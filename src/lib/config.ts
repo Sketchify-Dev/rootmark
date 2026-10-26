@@ -1,5 +1,5 @@
 /**
- * Runtime configuration for PortalIndex.
+ * Runtime configuration for Rootmark.
  *
  * Every endpoint can be overridden with an environment variable so the same build can be
  * pointed at a different chain without a code change. No secret lives in this file.
@@ -41,6 +41,15 @@ export const CONTRACTS = {
   evm: process.env.PORTALIDX_EVM_ANCHOR_CONTRACT ?? deployments?.evm?.address ?? "",
   wasm: process.env.PORTALIDX_WASM_ANCHOR_CONTRACT ?? deployments?.wasm?.address ?? "",
 } as const;
+
+/**
+ * Every contract whose events are decoded by name. The anchor is one of them, and the
+ * deployment record can name more.
+ */
+export const KNOWN_CONTRACTS = [
+  CONTRACTS.evm,
+  ...Object.values(deployments?.contracts ?? {}).map((entry) => entry.address),
+].filter(Boolean);
 
 /** How many indexed records are grouped into one Merkle batch. */
 export const BATCH_SIZE = Number(process.env.PORTALIDX_BATCH_SIZE ?? 25);

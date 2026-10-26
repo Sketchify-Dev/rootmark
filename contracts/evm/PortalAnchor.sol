@@ -5,7 +5,7 @@ pragma solidity ^0.8.24;
  * @title PortalAnchor
  * @notice Commits the Merkle root of a batch of indexed records to the Portaldot V3 chain.
  *
- * PortalIndex indexes both execution environments of the chain. An index is only worth
+ * Rootmark indexes both execution environments of the chain. An index is only worth
  * trusting if a reader can check it, so every batch of records is reduced to a single 32 byte
  * root and written here. Anything the indexer returns can then be rebuilt from its Merkle path
  * and compared with the root this contract holds.

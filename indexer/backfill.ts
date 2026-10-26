@@ -69,6 +69,7 @@ export async function backfillEvm(
   const records: NewEvent[] = [];
   for (const log of logs) {
     const contract = log.address.toLowerCase();
+    if (evm.shouldSkip(contract)) continue;
     const decoded = evm.decodeLog(
       { topics: log.topics, data: log.data },
       contract,

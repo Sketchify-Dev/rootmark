@@ -1,0 +1,17 @@
+{
+  "chainId": 420420777,
+  "evm": {
+    "address": "0x92B79C5cD9CC8235e3e2718a739BE825e2bd5430",
+    "txHash": "0x6e33aa2d09f1a32b076df8297529e8cf87f57bb9a777570ed2624ec9e822a923",
+    "blockNumber": 204392,
+    "deployer": "0xd2203a12d91862deFa25fcbdA24f6cA69CF331a2",
+    "deployedAt": 1793024566
+  },
+  "contracts": {
+    "Emitter": {
+      "address": "0x178B9ED9dB766d2ecda393ca0b780A643a12C31E",
+      "txHash": "0x618ca3df675f64d0cf4cecfdc9a807c9df01031ed4a73dcf6c410720d2b759e2",
+      "blockNumber": 204668
+    }
+  }
+}

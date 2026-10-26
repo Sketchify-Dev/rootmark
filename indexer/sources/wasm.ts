@@ -1,6 +1,6 @@
-import { ApiPromise, WsProvider } from "@polkadot/api";
+import { ApiPromise, HttpProvider, WsProvider } from "@polkadot/api";
 import type { EventRecord as PolkadotEventRecord } from "@polkadot/types/interfaces";
-import { EVM_CHAIN_ID, SS58_PREFIX, SUBSTRATE_WS } from "../../src/lib/config";
+import { EVM_CHAIN_ID, SS58_PREFIX, SUBSTRATE_RPC, SUBSTRATE_WS } from "../../src/lib/config";
 import { leafHash } from "../../src/lib/proof";
 import { ss58Encode } from "../../src/lib/address";
 import { hexToBytes } from "../../src/lib/hash";
@@ -24,44 +24,115 @@ export interface WasmSourceOptions {
   systemAccount?: string;
 }
 
+/** Errors that mean the transport dropped rather than the chain rejecting the request. */
+function isTransportError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    message.includes("WebSocket is not connected") ||
+    message.includes("fetch failed") ||
+    message.includes("Connection refused") ||
+    message.includes("ECONNRESET") ||
+    message.includes("timeout") ||
+    message.includes("Timed out")
+  );
+}
+
+/** Rejects a connect that hangs, so a dead endpoint does not stall startup forever. */
+function withTimeout<T>(work: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    work,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms).unref?.(),
+    ),
+  ]);
+}
+
 export class WasmSource {
   private constructor(
     private readonly api: ApiPromise,
     private readonly options: WasmSourceOptions,
+    private readonly transport: string,
   ) {}
 
   static async connect(options: WasmSourceOptions): Promise<WasmSource> {
-    const provider = new WsProvider(SUBSTRATE_WS, 2500);
-    const api = await ApiPromise.create({
-      provider,
-      noInitWarn: true,
-      types: {},
-    });
-    return new WasmSource(api, options);
+    // A long lived websocket is cheaper, but it does drop. The HTTP endpoint carries the same
+    // RPC and is used when the socket cannot be established at all.
+    try {
+      const provider = new WsProvider(SUBSTRATE_WS, 2500);
+      const api = await withTimeout(
+        ApiPromise.create({ provider, noInitWarn: true, types: {} }),
+        20_000,
+        "substrate websocket",
+      );
+      return new WasmSource(api, options, `websocket ${SUBSTRATE_WS}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn(`websocket transport unavailable (${message}), falling back to http`);
+      const api = await withTimeout(
+        ApiPromise.create({
+          provider: new HttpProvider(SUBSTRATE_RPC),
+          noInitWarn: true,
+          types: {},
+        }),
+        20_000,
+        "substrate http",
+      );
+      return new WasmSource(api, options, `http ${SUBSTRATE_RPC}`);
+    }
   }
 
   get label(): string {
-    return `${this.api.runtimeVersion.specName} v${this.api.runtimeVersion.specVersion}`;
+    return `${this.api.runtimeVersion.specName} v${this.api.runtimeVersion.specVersion} over ${this.transport}`;
+  }
+
+  /**
+   * Runs a read, retrying when the transport dropped. A dropped socket retries after giving
+   * the provider a moment to come back; anything the chain itself rejected surfaces at once.
+   */
+  private async resilient<T>(label: string, run: () => Promise<T>): Promise<T> {
+    let lastError: unknown;
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      try {
+        return await run();
+      } catch (error) {
+        lastError = error;
+        if (!isTransportError(error) || attempt === 3) throw error;
+        const wait = 1000 * (attempt + 1);
+        console.warn(`${label} lost the transport, retrying in ${wait}ms`);
+        await new Promise((resolveWait) => setTimeout(resolveWait, wait));
+      }
+    }
+    throw lastError;
   }
 
   async head(): Promise<number> {
-    const header = await this.api.rpc.chain.getHeader();
-    return header.number.toNumber();
+    return this.resilient("chain head", async () => {
+      const header = await this.api.rpc.chain.getHeader();
+      return header.number.toNumber();
+    });
   }
 
   async blockHash(number: number): Promise<string> {
-    const hash = await this.api.rpc.chain.getBlockHash(number);
-    return hash.toHex();
+    return this.resilient("block hash", async () => {
+      const hash = await this.api.rpc.chain.getBlockHash(number);
+      return hash.toHex();
+    });
   }
 
   /** Highest block the node will serve, which can lag the head while catching up. */
   async finalizedHead(): Promise<number> {
-    const hash = await this.api.rpc.chain.getFinalizedHead();
-    const header = await this.api.rpc.chain.getHeader(hash);
-    return header.number.toNumber();
+    return this.resilient("finalized head", async () => {
+      const hash = await this.api.rpc.chain.getFinalizedHead();
+      const header = await this.api.rpc.chain.getHeader(hash);
+      return header.number.toNumber();
+    });
   }
 
   async readBlock(blockNumber: number, blockHash: string): Promise<NewEvent[]> {
+    return this.resilient(`block ${blockNumber}`, () => this.readBlockOnce(blockNumber, blockHash));
+  }
+
+  private async readBlockOnce(blockNumber: number, blockHash: string): Promise<NewEvent[]> {
     const signed = await this.api.at(blockHash);
     const [eventRecords, timestamp] = await Promise.all([
       signed.query.system.events(),

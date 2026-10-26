@@ -40,16 +40,20 @@ export async function evmHead(): Promise<number> {
 export interface EvmSourceOptions {
   abi: unknown[];
   contracts: string[];
+  /** Addresses whose logs are not indexed, such as the anchor contract itself. */
+  exclude?: string[];
   maxBlocksPerTick?: number;
 }
 
 export class EvmSource {
   private readonly iface: Interface;
   private readonly contracts: Set<string>;
+  private readonly excluded: Set<string>;
 
   constructor(private readonly options: EvmSourceOptions) {
     this.iface = new Interface(options.abi as never);
     this.contracts = new Set(options.contracts.filter(Boolean).map((c) => c.toLowerCase()));
+    this.excluded = new Set((options.exclude ?? []).filter(Boolean).map((c) => c.toLowerCase()));
   }
 
   /**
@@ -77,6 +81,9 @@ export class EvmSource {
 
       for (const log of receipt.logs) {
         const contract = log.address.toLowerCase();
+        // The anchor contract is the indexer's own tool. Indexing its events would make every
+        // anchor produce a new record, which would then be anchored in turn, for ever.
+        if (this.excluded.has(contract)) continue;
         const decoded = this.decodeLog(log, contract);
         if (!decoded) continue;
 
@@ -96,6 +103,11 @@ export class EvmSource {
     }
 
     return records;
+  }
+
+  /** True when the address is the indexer's own tooling and its logs must not be indexed. */
+  shouldSkip(contract: string): boolean {
+    return this.excluded.has(contract.toLowerCase());
   }
 
   /** Decode a raw log. Public so the backfill path can reuse the same decoding. */

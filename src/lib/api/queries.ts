@@ -186,8 +186,14 @@ export async function buildProof(eventId: number): Promise<ProofPayload | null> 
   let onChainRootSource: ProofPayload["onChainRootSource"] = null;
 
   if (CONTRACTS.evm) {
+    // The batch is looked up by its own id first, because the contract only keeps the most
+    // recent root in latestRoot and every earlier batch still has to be checkable.
     try {
-      const raw = await ethCall(CONTRACTS.evm, functionSelector("latestRoot()"));
+      // getAnchor returns a 6 word RootRecord struct: (root, count, fromBlock,
+      // toBlock, anchoredAt, anchorer). The root is the first word; decodeBytes32
+      // reads exactly that and ignores the rest.
+      const data = `${functionSelector("getAnchor(bytes32)")}${batch.batchId.slice(2).padStart(64, "0")}`;
+      const raw = await ethCall(CONTRACTS.evm, data);
       const decoded = decodeBytes32(raw);
       if (decoded && decoded !== `0x${"0".repeat(64)}`) {
         onChainRoot = decoded;
@@ -196,6 +202,11 @@ export async function buildProof(eventId: number): Promise<ProofPayload | null> 
     } catch {
       onChainRoot = null;
     }
+
+    // latestRoot() is intentionally NOT consulted here. It holds only the most recent
+    // batch on the contract, which may belong to a different batch entirely. A batch id
+    // lookup that finds nothing means this batch is not on this contract, and the proof
+    // must say so rather than show an unrelated root.
   }
 
   if (!onChainRoot) {
@@ -217,15 +228,25 @@ export async function buildProof(eventId: number): Promise<ProofPayload | null> 
     ? onChainRoot.toLowerCase() === batch.root.toLowerCase()
     : null;
 
+  // A batch marked anchored in the database whose root is absent from the contract is a
+  // writer failure, not a pending batch. The proof fails loudly rather than reading as
+  // internally consistent.
+  const claimedAnchoredButMissing =
+    batch.status === "anchored" && onChainRootSource === null;
+
   return {
     leaf: event.leaf,
     proof,
     root: batch.root,
     batchId: batch.batchId,
-    anchorStatus: batch.status,
+    anchorStatus: claimedAnchoredButMissing ? "unsigned" : batch.status,
     onChainRoot,
     onChainRootSource,
-    verified: chainAgrees === null ? rootMatches : rootMatches && chainAgrees,
+    verified: claimedAnchoredButMissing
+      ? false
+      : chainAgrees === null
+        ? rootMatches
+        : rootMatches && chainAgrees,
   };
 }
 
@@ -271,7 +292,7 @@ export async function health(): Promise<HealthReport> {
       configured: signerConfigured,
       reason: signerConfigured
         ? null
-        : "No signing key configured, so roots are computed but not written on chain.",
+        : "No signing key in this process, so no new roots are written. Batches anchored earlier remain checkable.",
     },
     lastIndexedAt: lastIndexed ? Number(lastIndexed) : null,
     serverTime: Math.floor(Date.now() / 1000),

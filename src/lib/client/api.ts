@@ -26,7 +26,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     response = await fetch(path, { ...init, cache: "no-store" });
   } catch {
     throw new ApiError(
-      "The PortalIndex API could not be reached. Check that the server is running.",
+      "The Rootmark API could not be reached. Check that the server is running.",
       0,
     );
   }

@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1180" height="720" viewBox="0 0 1180 720" font-family="Inter, Helvetica, Arial, sans-serif">
   <rect width="1180" height="720" fill="#ffffff"/>
 
-  <text x="40" y="46" font-size="22" font-weight="600" fill="#14181f">PortalIndex architecture</text>
+  <text x="40" y="46" font-size="22" font-weight="600" fill="#14181f">Rootmark architecture</text>
   <text x="40" y="70" font-size="13" fill="#616a78">Verifiable data and query middleware for the Portaldot V3 chain, chain id 420420777</text>
 
   <!-- Chain boundary -->

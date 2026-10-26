@@ -201,7 +201,7 @@ Community Choice vote, which is decided by Discord voting and not by the judges.
 
 ## 5. Project
 
-**PortalIndex**: a verifiable data and query middleware for Portaldot V3.
+**Rootmark**: a verifiable data and query middleware for Portaldot V3.
 
 It indexes events from both execution environments of the same chain, normalizes them into
 one record shape, serves them through a query API, and anchors a Merkle root of each

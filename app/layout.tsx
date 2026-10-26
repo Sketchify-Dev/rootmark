@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Geist, IBM_Plex_Mono } from "next/font/google";
+import { InstrumentSerif, Switzer } from "@/landing/fonts";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,9 +16,12 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PortalIndex, verifiable data middleware for Portaldot V3",
+  title: {
+    default: "Rootmark, verifiable index for the Portaldot V3 chain",
+    template: "%s | Rootmark",
+  },
   description:
-    "Query events from both execution environments of the Portaldot V3 chain and verify any result against on-chain state.",
+    "One query surface across EVM and ink! events. Every record carries a Merkle proof checked against an on-chain root.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -26,7 +30,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       lang="en"
       className={`${geistSans.variable} ${plexMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-bg font-sans text-ink">{children}</body>
+      <body className={`min-h-full bg-bg font-sans text-ink ${Switzer.variable} ${InstrumentSerif.variable}`}>{children}</body>
     </html>
   );
 }

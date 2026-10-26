@@ -66,14 +66,12 @@ export function ConsoleView() {
       .catch(() => setFacets({ contracts: [], events: [] }));
     const timer = window.setInterval(() => loadHealth(), 30_000);
     return () => window.clearInterval(timer);
-    // The first mount performs the initial fetch.
   }, [loadHealth]);
 
   const run = useCallback(async (nextFilters: Filters, append = false) => {
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
-
     setListState("loading");
     setListError(null);
     if (!append) {
@@ -83,11 +81,7 @@ export function ConsoleView() {
     }
     try {
       const result = await fetchEvents(
-        {
-          ...filtersToQuery(nextFilters),
-          cursor: append ? (nextCursor ?? 0) : 0,
-          limit: 50,
-        },
+        { ...filtersToQuery(nextFilters), cursor: append ? (nextCursor ?? 0) : 0, limit: 50 },
         controller.signal,
       );
       setItems((previous) => (append ? [...previous, ...result.items] : result.items));
@@ -97,9 +91,7 @@ export function ConsoleView() {
       setListState("success");
     } catch (error) {
       if (controller.signal.aborted) return;
-      setListError(
-        error instanceof ApiError ? error.message : "The query could not be completed.",
-      );
+      setListError(error instanceof ApiError ? error.message : "The query could not be completed.");
       setListState("error");
     }
   }, [nextCursor]);
@@ -109,7 +101,6 @@ export function ConsoleView() {
     if (firstQuery.current) return;
     firstQuery.current = true;
     run(EMPTY_FILTERS);
-    // The first query runs once on mount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -133,9 +124,7 @@ export function ConsoleView() {
       setProof(payload);
       setProofState("success");
     } catch (error) {
-      setProofError(
-        error instanceof ApiError ? error.message : "The proof request failed.",
-      );
+      setProofError(error instanceof ApiError ? error.message : "The proof request failed.");
       setProofState("error");
     }
   }, []);
@@ -145,98 +134,94 @@ export function ConsoleView() {
   }, [onVerify, selected]);
 
   const hasFilters = useMemo(
-    () =>
-      Boolean(
-        appliedFilters.contract ||
-          appliedFilters.event ||
-          appliedFilters.address ||
-          appliedFilters.fromBlock ||
-          appliedFilters.toBlock ||
-          appliedFilters.vm !== "all",
-      ),
+    () => Boolean(appliedFilters.contract || appliedFilters.event || appliedFilters.address || appliedFilters.fromBlock || appliedFilters.toBlock || appliedFilters.vm !== "all"),
     [appliedFilters],
   );
 
   return (
     <Shell>
-      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-3">
-        <header className="flex flex-col gap-2">
-          <div className="flex flex-wrap items-end justify-between gap-2">
-            <div>
-              <h1 className="text-[22px] font-semibold leading-[1.25] tracking-[-0.01em] text-ink">
-                Event index
-              </h1>
-              <p className="mt-0.5 hidden max-w-2xl text-[13px] leading-[1.45] text-muted sm:block">
-                One query surface for both execution environments of the Portaldot V3 chain.
-                Every record can be checked against the Merkle root the anchor contract holds.
-              </p>
+      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4">
+        {/* Premium dark header card — same language as hero */}
+        <header className="rm-app-card-dark rm-rise overflow-hidden">
+          <div className="px-4 py-5 sm:px-6 sm:py-6">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p className="rm-app-kicker !text-[rgba(242,236,221,0.6)]">Portaldot V3 · chain 420420777</p>
+                <h1 className="rm-serif mt-1 text-[clamp(1.6rem,3vw,2.25rem)] font-normal leading-none tracking-[-0.02em]">Event index</h1>
+                <p className="mt-2 max-w-2xl text-[13px] leading-[1.5] text-[rgba(242,236,221,0.72)]">
+                  One query surface for both execution environments. Every record carries a Merkle proof you rebuild in this tab and check against the anchor on chain.
+                </p>
+              </div>
+              <div className="rm-console-strip">
+                <ChainStrip health={health} error={healthError} />
+              </div>
             </div>
-            <ChainStrip health={health} error={healthError} />
           </div>
-
-          {health && !health.anchoring.configured ? (
-            <Alert tone="warning" title="Anchoring is not configured on this deployment">
-              Roots are computed for every batch but no signing key is present, so nothing is
-              written on chain. Set PORTALDOT_MNEMONIC and restart the indexer to anchor.
-            </Alert>
-          ) : null}
+          <div className="flex flex-wrap items-center gap-2 border-t border-[rgba(242,236,221,0.12)] bg-[rgba(242,236,221,0.06)] px-4 py-3 text-[12px] sm:px-6">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f2ecdd] px-2.5 py-1 text-[11px] font-semibold tracking-wide text-[#041a55]">Live index</span>
+            <span className="text-[rgba(242,236,221,0.7)]">
+              {health ? `${health.indexed.total.toLocaleString("en-US")} records · ${health.anchors.anchored} anchored batches` : "reading chain…"}
+            </span>
+          </div>
         </header>
 
-        <QueryPanel
-          filters={filters}
-          onChange={(next) => {
-            setFilters(next);
-            setErrors(validateFilters(next));
-          }}
-          onRun={onRun}
-          onReset={() => {
-            setFilters(EMPTY_FILTERS);
-            setErrors({});
-            setSelected(null);
-            setProof(null);
-            setProofState("idle");
-            void run(EMPTY_FILTERS);
-          }}
-          running={listState === "loading"}
-          facets={facets}
-          errors={errors}
-        />
+        {health && !health.anchoring.configured ? (
+          <div className="rm-rise">
+            <Alert tone="warning" title="Anchoring is paused on this deployment">
+              This web process has no signing key, so it is not writing new roots. Roots are still computed for every batch, and batches anchored earlier remain checkable. Set PORTALDOT_MNEMONIC and restart the indexer to resume anchoring.
+            </Alert>
+          </div>
+        ) : null}
 
-        <div className="grid min-w-0 gap-3 xl:grid-cols-[minmax(0,1fr)_400px]">
-          <div className="min-w-0">
-          <ResultsTable
-            items={items}
-            status={listState}
-            error={listError}
-            total={total}
-            hasMore={nextCursor !== null}
-            onVerify={onVerify}
-            onLoadMore={() => void run(appliedFilters, true)}
-            onRetry={() => void run(appliedFilters)}
-            selectedId={selected?.id ?? null}
-            hasFilters={hasFilters}
-            onClearFilters={() => {
+        <div className="rm-rise">
+          <QueryPanel
+            filters={filters}
+            onChange={(next) => { setFilters(next); setErrors(validateFilters(next)); }}
+            onRun={onRun}
+            onReset={() => {
               setFilters(EMPTY_FILTERS);
               setErrors({});
               setSelected(null);
               setProof(null);
+              setProofState("idle");
               void run(EMPTY_FILTERS);
             }}
+            running={listState === "loading"}
+            facets={facets}
+            errors={errors}
           />
-          </div>
+        </div>
 
-          <div className="min-w-0 xl:sticky xl:top-3 xl:self-start">
+        <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_400px]">
+          <div className="rm-rise min-w-0">
+            <ResultsTable
+              items={items}
+              status={listState}
+              error={listError}
+              total={total}
+              hasMore={nextCursor !== null}
+              onVerify={onVerify}
+              onLoadMore={() => void run(appliedFilters, true)}
+              onRetry={() => void run(appliedFilters)}
+              selectedId={selected?.id ?? null}
+              hasFilters={hasFilters}
+              onClearFilters={() => {
+                setFilters(EMPTY_FILTERS);
+                setErrors({});
+                setSelected(null);
+                setProof(null);
+                void run(EMPTY_FILTERS);
+              }}
+            />
+          </div>
+          <div className="rm-rise min-w-0 xl:sticky xl:top-[4.25rem] xl:self-start">
             <VerifyPanel
               event={selected}
               proof={proof}
               status={proofState}
               error={proofError}
               onRetry={retryProof}
-              onClose={() => {
-                setSelected(null);
-                setProof(null);
-                setProofState("idle");
-              }}
+              onClose={() => { setSelected(null); setProof(null); setProofState("idle"); }}
             />
           </div>
         </div>
@@ -248,51 +233,23 @@ export function ConsoleView() {
 function ChainStrip({ health, error }: { health: HealthReport | null; error: string | null }) {
   if (error) {
     return (
-      <div className="flex items-center gap-2 rounded-[var(--radius-control)] border border-[#eebcbc] bg-[#fdefef] px-2 py-1.5">
-        <StatusDot tone="danger" />
-        <span className="text-[12px] text-ink">Chain check failed</span>
-      </div>
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-[#eebcbc] bg-[#fdefef] px-2.5 py-1 text-[12px] text-[#c62828]">
+        <StatusDot tone="danger" /> Chain check failed
+      </span>
     );
   }
   if (!health) {
     return (
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1" role="status" aria-label="Checking chain">
-        <StatSkeleton label="EVM head" />
-        <StatSkeleton label="WASM head" />
-        <StatSkeleton label="Indexed" />
-        <Skeleton className="h-[21px] w-24 rounded-[3px]" />
-        <span className="sr-only">Checking chain</span>
-      </div>
+      <span className="inline-flex items-center gap-2 text-[12px] text-[rgba(242,236,221,0.7)]" role="status" aria-label="Checking chain">
+        <span className="h-2 w-2 animate-pulse rounded-full bg-[#f2ecdd]/60" /> Checking chain…
+      </span>
     );
   }
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-      <Stat label="EVM head" value={formatBlock(health.heads.evm)} />
-      <Stat label="WASM head" value={formatBlock(health.heads.wasm)} />
-      <Stat label="Indexed" value={`${health.indexed.total.toLocaleString("en-US")}`} />
-      <div className="flex items-center gap-1.5">
-        <Badge tone={health.anchoring.configured ? "success" : "warning"}>
-          {health.anchoring.configured ? "Anchoring live" : "Anchoring off"}
-        </Badge>
-      </div>
-    </div>
-  );
-}
-
-function StatSkeleton({ label }: { label: string }) {
-  return (
-    <div className="flex flex-col">
-      <span className="label">{label}</span>
-      <Skeleton className="mt-1 h-4 w-16" />
-    </div>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex flex-col">
-      <span className="label">{label}</span>
-      <span className="tnum text-[13px] text-ink">{value}</span>
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="rm-app-chain !bg-[rgba(242,236,221,0.1)] !text-[#f2ecdd] !border-[rgba(242,236,221,0.18)]">EVM head {formatBlock(health.heads.evm)}</span>
+      <span className="rm-app-chain !bg-[rgba(242,236,221,0.1)] !text-[#f2ecdd] !border-[rgba(242,236,221,0.18)]">WASM head {health.heads.wasm !== null ? formatBlock(health.heads.wasm) : "—"}</span>
+      <Badge tone={health.anchoring.configured ? "success" : "warning"}>{health.anchoring.configured ? "Anchoring live" : "Anchoring off"}</Badge>
     </div>
   );
 }
