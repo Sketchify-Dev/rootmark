@@ -1,0 +1,29 @@
+# Rootmark
+
+> The verifiable index for the Portaldot V3 chain. One query across EVM and ink! events, every result carries a Merkle proof you check against an on-chain root.
+
+Rootmark indexes both execution environments of the Portaldot V3 chain (chain 420420777):
+- EVM (Solidity logs) via eth_getBlockByNumber + eth_getTransactionReceipt
+- WASM / ink! (pallet_contracts) via system.events
+
+Each record is normalised to one EventRecord { vm, chainId, blockNumber, blockHash, txHash, contract, event, args, leaf }. Leaves are keccak256(canonicalJson(record)). Batches are Merkle trees; the root is anchored in PortalAnchor.sol on the EVM and verifiable in the browser with /api/v1/proof/:id.
+
+## Pages
+- / — landing, how it works, proof in one sentence, numbers, FAQ, ledger paper
+- /console — query and verify every record (EVM + WASM, one shape, one proof)
+- /anchors — all anchored batches, Merkle roots committed on chain
+- /contracts — anchor contract state live from chain (EVM 0x92B79C5cD9CC8235e3e2718a739BE825e2bd5430, chain 420420777)
+- /privacy — privacy note
+
+## API
+- GET /api/v1/events?vm=&contract=&event=&address=&fromBlock=&toBlock=&cursor=&limit=
+- GET /api/v1/events/:id
+- GET /api/v1/proof/:id -> { leaf, proof, root, batchId, anchorStatus, onChainRoot, verified }
+- GET /api/v1/anchors
+- GET /api/v1/contracts
+- GET /api/v1/health
+- GET /api/v1/filters
+
+Built for Portaldot Hacker House 2026, Track 1 Modular Cloud and Middleware. No fake metrics, no mock roots, no generated reviews. Every count on the page is a real count from the index.
+
+Repo: set your own remote. Update https://rootmark.portaldot.dev to your real domain in app/layout.tsx metadataBase, app/robots.ts and app/sitemap.ts.

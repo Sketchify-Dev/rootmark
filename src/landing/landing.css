@@ -1561,6 +1561,42 @@
   }
 }
 
+
+/* Verification lit sentence — premium serif, not body sans */
+.rm-lit-line {
+  max-width: 28ch;
+  font-size: clamp(1.45rem, 2.6vw, 2.05rem);
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  font-style: italic;
+}
+
+.rm-lit-lead {
+  font-style: normal;
+  font-weight: 400;
+  color: var(--rm-ink);
+  opacity: 0.62;
+}
+
+.rm-lit-item {
+  white-space: nowrap;
+}
+
+.rm-lit-word {
+  color: rgba(6, 43, 138, 0.28);
+  transition: color 520ms var(--ease-out);
+}
+
+.rm-lit-word[data-lit-on="true"] {
+  color: var(--rm-ink);
+}
+
+.rm-lit-punct {
+  color: var(--rm-ink);
+  opacity: 0.62;
+  font-style: normal;
+}
+
 /* Verify choreography: siblings stagger by child index */
 .rm-verify-step:nth-child(1) { --step: 0; }
 .rm-verify-step:nth-child(2) { --step: 1; }
@@ -1578,4 +1614,10 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+
+/* Sticky mobile CTA — only on small screens, below the content */
+@media (max-width: 639px) {
+  .sticky-mobile-cta { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
 }

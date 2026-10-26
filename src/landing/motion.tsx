@@ -18,18 +18,18 @@ export function LitNames({ names, lead }: { names: string[]; lead: string }) {
   }, []);
 
   return (
-    <p className="rm-body max-w-none !text-[clamp(1.5rem,3vw,2.25rem)] !leading-[1.15]">
-      <span>{lead} </span>
+    <p className="rm-lit-line rm-serif">
+      <span className="rm-lit-lead">{lead} </span>
       {names.map((name, i) => (
-        <span key={name}>
+        <span key={name} className="rm-lit-item">
           <span
             data-lit={name}
             data-lit-on={i === 0 ? "true" : undefined}
-            className="transition-colors duration-300 data-[lit-on]:text-[var(--rm-ink)] text-[var(--rm-muted)] opacity-70 data-[lit-on]:opacity-100"
+            className="rm-lit-word"
           >
             {name}
           </span>
-          {i < names.length - 1 ? ", " : "."}
+          <span className="rm-lit-punct">{i < names.length - 1 ? ", " : "."}</span>
         </span>
       ))}
     </p>

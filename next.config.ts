@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  productionBrowserSourceMaps: false,
+    // keep source maps off the shipped JS (TT checklist), type errors still fail the build
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {

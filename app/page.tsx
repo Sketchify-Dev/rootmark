@@ -6,6 +6,8 @@ import { getLandingData, shortHash } from "@/landing/data";
 import { InstrumentSerif } from "@/landing/fonts";
 import "@/landing/landing.css";
 
+export const metadata = { alternates: { canonical: "/" } };
+
 function Nav() {
   return (
     <header data-rm-header className="rm-nav-wrap">
@@ -371,9 +373,16 @@ function Footer() {
           <Link href="/console">Console</Link>
           <Link href="/anchors">Anchors</Link>
           <Link href="/contracts">Contracts</Link>
+          <Link href="/privacy">Privacy</Link>
         </nav>
       </div>
       <div className="rm-frame rm-footer-meta">
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[12px]">
+          <Link href="/sitemap.xml" className="underline underline-offset-4 decoration-white/20 hover:decoration-white/60">Sitemap</Link>
+          <Link href="/llms.txt" className="underline underline-offset-4 decoration-white/20 hover:decoration-white/60">llms.txt</Link>
+          <Link href="/robots.txt" className="underline underline-offset-4 decoration-white/20 hover:decoration-white/60">robots.txt</Link>
+          <a href="https://github.com" className="underline underline-offset-4 decoration-white/20 hover:decoration-white/60">GitHub</a>
+        </div>
         <p>Built for the Portaldot Hacker House 2026.</p>
         <p className="rm-footer-credits">chain 420420777 · etching: Millet, c. 1847, CC0 via Art Institute of Chicago · teleprinter: Gutkowski, CC BY 3.0 via Wikimedia</p>
       </div>
