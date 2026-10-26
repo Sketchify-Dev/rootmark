@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import "@/landing/landing.css";
+import { LogoMark } from "@/components/site/logo";
 import { Rise } from "@/landing/rise-client";
 
 const NAV = [
@@ -16,7 +17,7 @@ const NAV = [
 function Wordmark() {
   return (
     <Link href="/" className="rm-app-mark" aria-label="Rootmark home">
-      <span aria-hidden="true" className="rm-app-dot" />
+      <LogoMark size={26} />
       Rootmark
     </Link>
   );

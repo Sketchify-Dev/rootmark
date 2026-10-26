@@ -62,3 +62,4 @@ playwright-report/
 *.db-shm
 .env
 .env.local
+scripts/gen-logo.mjs

@@ -631,6 +631,15 @@
   text-decoration: none;
 }
 
+.rm-logo-mark {
+  display: inline-flex;
+  flex-shrink: 0;
+  border-radius: 7px;
+  overflow: hidden;
+  box-shadow: 0 1px 6px rgba(4,26,85,0.18);
+}
+.rm-logo-mark svg { display: block; }
+
 .rm-nav-dot {
   width: 8px;
   height: 8px;

@@ -4,6 +4,7 @@ import { LitNames } from "@/landing/motion";
 import { Rise } from "@/landing/rise-client";
 import { getLandingData, shortHash } from "@/landing/data";
 import { InstrumentSerif } from "@/landing/fonts";
+import { LogoMark } from "@/components/site/logo";
 import "@/landing/landing.css";
 
 export const metadata = { alternates: { canonical: "/" } };
@@ -12,7 +13,7 @@ function Nav() {
   return (
     <header data-rm-header className="rm-nav-wrap">
       <Link href="/" className="rm-nav-mark" aria-label="Rootmark home">
-        <span className="rm-nav-dot" aria-hidden="true" />
+        <LogoMark size={28} />
         Rootmark
       </Link>
       <nav aria-label="Landing" className="rm-nav-pill hidden md:flex">
