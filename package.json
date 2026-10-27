@@ -44,5 +44,29 @@
     "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^5.0.5"
+  },
+  "description": "Verifiable data and query middleware for the Portaldot V3 chain. One query across EVM and ink! events, every result carries a Merkle proof.",
+  "keywords": [
+    "portaldot",
+    "polkadot",
+    "evm",
+    "ink",
+    "merkle",
+    "middleware",
+    "verifiable",
+    "substrate"
+  ],
+  "author": "Rootmark",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sketchify-Dev/rootmark.git"
+  },
+  "homepage": "https://github.com/Sketchify-Dev/rootmark#readme",
+  "bugs": {
+    "url": "https://github.com/Sketchify-Dev/rootmark/issues"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

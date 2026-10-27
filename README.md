@@ -13,7 +13,7 @@ and commits a Merkle root of every batch of records on chain. A reader can fetch
 its Merkle path, rebuild the root in their own process, and compare it with the root the
 anchor contract holds. If the indexer invents a record, the proof fails.
 
-Built for the Portaldot Hacker House 2026, track 1, Modular Cloud and Middleware.
+Built for the Portaldot Hacker House 2026, track 1, Modular Cloud and Middleware. Pages: `/` landing, `/about` why it exists, `/console` query and verify, `/anchors` batches, `/contracts` live state, `/privacy` note — full map in `public/llms.txt` and `/sitemap.xml`.
 
 ## What it does
 
@@ -197,6 +197,19 @@ contracts/wasm/anchor/  the ink! anchor contract
 scripts/                compile, deploy, wallet, proof verification
 tests/                  unit tests
 ```
+
+## Pages
+
+| Route | Purpose |
+|---|---|
+| `/` | landing: hero, how it works, proof in one sentence, numbers, FAQ, ledger paper |
+| `/about` | why the middleware exists, four hash verification, live contracts, track fit, honest limits |
+| `/console` | query and verify every record (one shape, one proof) |
+| `/anchors` | all anchored batches, Merkle roots committed on chain |
+| `/contracts` | anchor contract state live from chain |
+| `/privacy` | privacy note, no tracking, wallet guidance |
+
+SEO: `metadataBase` plus per route canonical, `openGraph` and `twitter` with `/landing/ledger-paper.jpg` 1920x1485, full favicon set (`/favicon.ico`, `/icon.png`, `/favicon.svg`, `/apple-icon.png`), `app/manifest.ts` (PWA, theme `#062b8a`, bg `#e6dbc7`), `app/opengraph-image.tsx` (1200x630, edge), `robots.txt`, `sitemap.xml`, `llms.txt`, custom 404, breadcrumbs plus JSON-LD.
 
 ## Design decisions worth knowing
 

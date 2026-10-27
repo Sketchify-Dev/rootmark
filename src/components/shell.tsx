@@ -12,6 +12,7 @@ const NAV = [
   { href: "/console", label: "Console" },
   { href: "/anchors", label: "Anchors" },
   { href: "/contracts", label: "Contracts" },
+  { href: "/about", label: "About" },
 ] as const;
 
 function Wordmark() {

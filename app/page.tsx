@@ -21,6 +21,7 @@ function Nav() {
         <Link href="#proof" className="rm-nav-link">Proof</Link>
         <Link href="#faq" className="rm-nav-link">Questions</Link>
         <Link href="/anchors" className="rm-nav-link">Anchors</Link>
+        <Link href="/about" className="rm-nav-link">About</Link>
       </nav>
       <div className="flex items-center gap-2">
         <Link href="/console" className="rm-nav-cta">
@@ -374,6 +375,7 @@ function Footer() {
           <Link href="/console">Console</Link>
           <Link href="/anchors">Anchors</Link>
           <Link href="/contracts">Contracts</Link>
+          <Link href="/about">About</Link>
           <Link href="/privacy">Privacy</Link>
         </nav>
       </div>
@@ -382,7 +384,7 @@ function Footer() {
           <Link href="/sitemap.xml" className="underline underline-offset-4 decoration-white/20 hover:decoration-white/60">Sitemap</Link>
           <Link href="/llms.txt" className="underline underline-offset-4 decoration-white/20 hover:decoration-white/60">llms.txt</Link>
           <Link href="/robots.txt" className="underline underline-offset-4 decoration-white/20 hover:decoration-white/60">robots.txt</Link>
-          <a href="https://github.com" className="underline underline-offset-4 decoration-white/20 hover:decoration-white/60">GitHub</a>
+          <a href="https://github.com/Sketchify-Dev/rootmark" className="underline underline-offset-4 decoration-white/20 hover:decoration-white/60">GitHub</a>
         </div>
         <p>Built for the Portaldot Hacker House 2026.</p>
         <p className="rm-footer-credits">chain 420420777 · etching: Millet, c. 1847, CC0 via Art Institute of Chicago · teleprinter: Gutkowski, CC BY 3.0 via Wikimedia</p>

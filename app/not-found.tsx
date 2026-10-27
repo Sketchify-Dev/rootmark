@@ -1,4 +1,5 @@
 import Link from "next/link";
+import "@/landing/landing.css";
 
 export default function NotFound() {
   return (

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Geist, IBM_Plex_Mono } from "next/font/google";
 import { InstrumentSerif, Switzer } from "@/landing/fonts";
@@ -61,6 +61,13 @@ export const metadata: Metadata = {
     follow: true,
   },
   category: "technology",
+  authors: [{ name: "Rootmark" }],
+  creator: "Rootmark",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#062b8a",
+  colorScheme: "light",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

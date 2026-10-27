@@ -13,6 +13,7 @@ Each record is normalised to one EventRecord { vm, chainId, blockNumber, blockHa
 - /console — query and verify every record (EVM + WASM, one shape, one proof)
 - /anchors — all anchored batches, Merkle roots committed on chain
 - /contracts — anchor contract state live from chain (EVM 0x92B79C5cD9CC8235e3e2718a739BE825e2bd5430, chain 420420777)
+- /about — why the middleware exists, how verification works, live contracts, honest limits
 - /privacy — privacy note
 
 ## API
