@@ -35,7 +35,7 @@
 .rm-frame {
   margin-inline: auto;
   max-width: 76rem;
-  padding-inline: clamp(1rem, 4vw, 2rem);
+  padding-inline: clamp(1.15rem, 5vw, 2rem);
 }
 
 /* Type steps from the sheet, mapped to Switzer. */
@@ -717,7 +717,17 @@
 @media (max-width: 767px) {
   .rm-hero-title { font-size: clamp(3rem, 18vw, 6rem); }
   .rm-hero-card { border-radius: 16px; }
-  .rm-hero-inner { padding: 1.25rem; }
+  .rm-hero-inner { padding: 1.5rem 1.35rem 1.65rem; }
+  .rm-hero-grid { gap: 1.35rem; }
+  .rm-proof-copy { line-height: 1.7; }
+  .rm-how-body { line-height: 1.7; }
+  .rm-how-card { padding: 1.45rem 1.35rem; }
+  .rm-proof-card { padding: 1.35rem 1.25rem; }
+  .rm-stats-cell { padding: 1.6rem 1.35rem; }
+  .rm-stats-caption { line-height: 1.55; max-width: 26ch; }
+  .rm-faq-card summary { padding: 1.05rem 1.25rem; }
+  .rm-faq-card p { padding: 1rem 1.25rem 1.25rem; }
+  .rm-frame { padding-inline: 1.4rem; }
 }
 
 /* ——— Premium rest-of-page, same language as the hero card ——— */
@@ -758,7 +768,7 @@
   margin-top: 0.9rem;
   max-width: 36ch;
   font-size: 1.05rem;
-  line-height: 1.55;
+  line-height: 1.6;
   color: var(--rm-muted);
 }
 
@@ -816,8 +826,8 @@
 
 .rm-how-body {
   font-size: 1.0625rem;
-  line-height: 1.6;
-  max-width: 36ch;
+  line-height: 1.65;
+  max-width: 38ch;
 }
 
 .rm-how-steps {
@@ -1026,9 +1036,9 @@
 .rm-stats-caption {
   margin-top: 0.5rem;
   font-size: 0.8125rem;
-  line-height: 1.45;
+  line-height: 1.5;
   color: rgba(242, 236, 221, 0.7);
-  max-width: 18ch;
+  max-width: 22ch;
 }
 
 /* FAQ — cards, not hairlines */

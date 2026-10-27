@@ -4,7 +4,6 @@ import { Geist, IBM_Plex_Mono } from "next/font/google";
 import { InstrumentSerif, Switzer } from "@/landing/fonts";
 import "./globals.css";
 import { SiteJsonLd, SoftwareJsonLd } from "@/components/site/json-ld";
-import { StickyMobileCta } from "@/components/site/mobile-cta";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -77,7 +76,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`${geistSans.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className={`min-h-full bg-bg font-sans text-ink ${Switzer.variable} ${InstrumentSerif.variable}`}>{children}
-        <StickyMobileCta />
         <SiteJsonLd />
         <SoftwareJsonLd />
       </body>

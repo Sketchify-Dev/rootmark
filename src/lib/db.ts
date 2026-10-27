@@ -15,10 +15,20 @@ let db: DatabaseSync | null = null;
 
 export function getDb(): DatabaseSync {
   if (db) return db;
-  mkdirSync(dirname(DB_PATH), { recursive: true });
-  db = new DatabaseSync(DB_PATH);
-  db.exec("PRAGMA journal_mode = WAL;");
-  db.exec("PRAGMA foreign_keys = ON;");
+  try {
+    mkdirSync(dirname(DB_PATH), { recursive: true });
+    db = new DatabaseSync(DB_PATH);
+  } catch {
+    // Vercel functions have a read-only filesystem outside /tmp. Fall back to
+    // an in-memory database so reads return empty instead of 500ing.
+    db = new DatabaseSync(":memory:");
+  }
+  try {
+    db.exec("PRAGMA journal_mode = WAL;");
+  } catch {}
+  try {
+    db.exec("PRAGMA foreign_keys = ON;");
+  } catch {}
   migrate(db);
   return db;
 }
