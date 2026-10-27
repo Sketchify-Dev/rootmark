@@ -1,4 +1,4 @@
-const SITE_URL = "https://rootmark.portaldot.dev";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://rootmark.portaldot.dev");
 
 export function SiteJsonLd() {
   const data = {

@@ -17,7 +17,7 @@ const plexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600"],
 });
 
-const SITE_URL = "https://rootmark.portaldot.dev";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://rootmark.portaldot.dev");
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

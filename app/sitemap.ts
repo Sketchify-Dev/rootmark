@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://rootmark.portaldot.dev";
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://rootmark.portaldot.dev");
   const now = new Date();
   return [
     { url: `${base}/`, lastModified: now, changeFrequency: "daily", priority: 1 },

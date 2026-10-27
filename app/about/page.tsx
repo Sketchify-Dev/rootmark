@@ -41,7 +41,7 @@ export default function AboutPage() {
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link href="/console" className="rm-nav-cta">Open console</Link>
-                <Link href="/anchors" className="rm-hero-arrow w-auto px-4 gap-2">See anchored batches <span aria-hidden="true">→</span></Link>
+                <Link href="/anchors" className="rm-about-secondary">See anchored batches <span aria-hidden="true">→</span></Link>
               </div>
             </div>
           </section>

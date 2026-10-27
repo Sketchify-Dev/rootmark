@@ -683,6 +683,24 @@
   box-shadow: 0 8px 24px -12px rgba(6, 43, 138, 0.5);
 }
 
+.rm-about-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid var(--rm-line);
+  background: #fff;
+  color: var(--rm-ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(6,43,138,0.08);
+  transition: background 160ms var(--ease-out), transform 160ms var(--ease-out);
+}
+.rm-about-secondary:hover { background: var(--rm-field); }
+.rm-about-secondary:active { transform: scale(0.98); }
+
 .rm-eyebrow-pill {
   display: inline-flex;
   align-items: center;
