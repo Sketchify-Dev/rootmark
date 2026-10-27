@@ -445,13 +445,14 @@ async function LandingContent() {
 function LandingSkeleton() {
   return (
     <div className={`rootmark-landing ${InstrumentSerif.variable}`}>
-      <div className="rm-frame py-5 text-lg font-semibold">Rootmark</div>
-      <div className="rm-frame pb-16 pt-10">
-        <p className="rm-display text-[clamp(3rem,11vw,10rem)]">
-          Every record
-          <br />
-          leaves a mark.
-        </p>
+      <header className="rm-nav-wrap">
+        <div className="rm-nav-mark text-lg font-semibold">Rootmark</div>
+      </header>
+      <div className="rm-frame pb-16 pt-6 sm:pt-10">
+        <p className="rm-eyebrow"><span className="rm-eyebrow-pill">Portaldot Hacker House 2026</span></p>
+        <p className="rm-serif text-[clamp(4rem,14vw,12rem)] leading-[0.9] tracking-[-0.02em]">Rootmark</p>
+        <div className="mt-8 h-64 rounded-[20px] bg-[#041a55]/10" aria-hidden="true" />
+        <p className="mt-6 max-w-[40ch] text-[15px] leading-[1.5] opacity-60">Loading index...</p>
       </div>
     </div>
   );

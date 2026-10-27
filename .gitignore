@@ -63,3 +63,4 @@ playwright-report/
 .env
 .env.local
 scripts/gen-logo.mjs
+scripts/

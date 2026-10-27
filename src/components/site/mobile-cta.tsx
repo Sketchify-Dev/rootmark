@@ -1,6 +1,25 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export function StickyMobileCta() {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setVisible(window.scrollY > 400);
+        ticking = false;
+      });
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  if (!visible) return null;
   return (
     <div className="sticky-mobile-cta pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center p-3 sm:hidden">
       <Link

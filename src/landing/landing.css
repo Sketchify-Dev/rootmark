@@ -878,6 +878,8 @@
   max-width: 44ch;
 }
 
+.rm-lit-line { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
+
 .rm-proof-copy p + p {
   margin-top: 0.9rem;
 }
@@ -1607,6 +1609,13 @@
 
 .rm-lit-item {
   white-space: nowrap;
+}
+@media (max-width: 639px) {
+  .rm-lit-item { white-space: normal; overflow-wrap: anywhere; }
+  .rm-lit-line { max-width: 100%; padding-right: 0; }
+  .rm-proof-grid, .rm-proof-copy, .rm-premium-card { min-width: 0; overflow-wrap: anywhere; }
+  .rm-section { padding-inline: 0; }
+  .rm-frame { overflow: visible; }
 }
 
 .rm-lit-word {
