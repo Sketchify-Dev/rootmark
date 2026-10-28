@@ -14,9 +14,8 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { Contract, HDNodeWallet, JsonRpcProvider } from "ethers";
 import { EVM_RPC } from "../src/lib/config.js";
-const DEPLOYMENTS_PATH = process.env.PORTALIDX_DEPLOYMENTS ?? resolve(root, "contracts/deployments.json");
-
 const root = resolve(import.meta.dirname, "..");
+const DEPLOYMENTS_PATH = process.env.PORTALIDX_DEPLOYMENTS ?? resolve(root, "contracts/deployments.json");
 const deployments = JSON.parse(readFileSync(DEPLOYMENTS_PATH, "utf8"));
 const emitterAddress = deployments?.contracts?.Emitter?.address;
 if (!emitterAddress) {
