@@ -613,15 +613,15 @@ export const SEED_ANCHORS = [
   {
     "id": 8,
     "batchId": "0x7e58c0059d6d8fca953168c789f0b9a8b40772cd4461ffff5d711d6024af015a",
-    "root": "0x3aa9be7062784e58762fff32f075bf822d3366f91dd805ff7dd938c0c7f21083",
+    "root": "0x8662c7d3de6bb9c570f60023c0c305749fe44563cd670edb4efa44e467b06821",
     "count": 1,
     "fromBlock": 140655,
     "toBlock": 140655,
     "vm": "wasm",
-    "txHash": "0x8f1c0b2d4a9e6c3f7d2b1a0c9e8f7d6b5a4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e",
-    "evmTxHash": "0x8f1c0b2d4a9e6c3f7d2b1a0c9e8f7d6b5a4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e",
+    "txHash": null,
+    "evmTxHash": null,
     "wasmTxHash": null,
-    "status": "anchored",
+    "status": "unsigned",
     "createdAt": 1792743422
   }
 ] as unknown as AnchorBatch[];

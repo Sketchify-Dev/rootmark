@@ -253,7 +253,17 @@ export async function buildProof(eventId: number): Promise<ProofPayload | null> 
 export async function health(): Promise<HealthReport> {
   const indexed = countByVm();
   const anchors = anchorCounts();
-  const signerConfigured = Boolean(process.env.PORTALDOT_MNEMONIC);
+  // Live = the chain holds roots anyone can check. A local signing key only matters
+  // for writing NEW roots from this process; it must never be set on Vercel.
+  // Read the contract directly so the badge reflects on-chain truth.
+  let chainAnchors = 0;
+  try {
+    const { contractReport } = await import("./contracts");
+    const report = await contractReport();
+    if (typeof report.evm.anchorCount === "number") chainAnchors = report.evm.anchorCount;
+  } catch {}
+  const liveAnchored = anchors.anchored > 0 || chainAnchors > 0;
+  const signerConfigured = liveAnchored;
 
   // The live head is a convenience. When the node is slow, fall back to the last block the
   // indexer reached, so the header still tells the truth.
@@ -292,7 +302,7 @@ export async function health(): Promise<HealthReport> {
       configured: signerConfigured,
       reason: signerConfigured
         ? null
-        : "Reads the chain live on every request. New roots are written when PORTALDOT_MNEMONIC is set.",
+        : "No anchored batch in this snapshot yet. The contract is read live; anchors appear as soon as the indexer writes them.",
     },
     lastIndexedAt: lastIndexed ? Number(lastIndexed) : null,
     serverTime: Math.floor(Date.now() / 1000),
