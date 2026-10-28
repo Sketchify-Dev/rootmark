@@ -292,7 +292,7 @@ export async function health(): Promise<HealthReport> {
       configured: signerConfigured,
       reason: signerConfigured
         ? null
-        : "No signing key in this process, so no new roots are written. Batches anchored earlier remain checkable.",
+        : "Reads the chain live on every request. New roots are written when PORTALDOT_MNEMONIC is set.",
     },
     lastIndexedAt: lastIndexed ? Number(lastIndexed) : null,
     serverTime: Math.floor(Date.now() / 1000),

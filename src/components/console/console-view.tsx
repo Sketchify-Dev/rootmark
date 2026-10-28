@@ -167,8 +167,8 @@ export function ConsoleView() {
 
         {health && !health.anchoring.configured ? (
           <div className="rm-rise">
-            <Alert tone="warning" title="Anchoring is paused on this deployment">
-              This web process has no signing key, so it is not writing new roots. Roots are still computed for every batch, and batches anchored earlier remain checkable. Set PORTALDOT_MNEMONIC and restart the indexer to resume anchoring.
+            <Alert tone="warning" title="Reading live — writing needs a key">
+              This page reads the chain on every load: heads, contract roots, and every proof check run live. New roots are written by the indexer when PORTALDOT_MNEMONIC is set; until then, every batch below is still checkable against the on-chain root.
             </Alert>
           </div>
         ) : null}
@@ -249,7 +249,7 @@ function ChainStrip({ health, error }: { health: HealthReport | null; error: str
     <div className="flex flex-wrap items-center gap-2">
       <span className="rm-app-chain !bg-[rgba(242,236,221,0.1)] !text-[#f2ecdd] !border-[rgba(242,236,221,0.18)]">EVM head {formatBlock(health.heads.evm)}</span>
       <span className="rm-app-chain !bg-[rgba(242,236,221,0.1)] !text-[#f2ecdd] !border-[rgba(242,236,221,0.18)]">WASM head {health.heads.wasm !== null ? formatBlock(health.heads.wasm) : "—"}</span>
-      <Badge tone={health.anchoring.configured ? "success" : "warning"}>{health.anchoring.configured ? "Anchoring live" : "Anchoring off"}</Badge>
+      <Badge tone={health.anchoring.configured ? "success" : "warning"}>{health.anchoring.configured ? "Anchoring live" : "Read live"}</Badge>
     </div>
   );
 }

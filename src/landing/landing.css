@@ -1663,6 +1663,14 @@
 }
 
 
+/* App header is mobile-only for Landing link and Menu button.
+   Tailwind md:hidden loses to .rm-app-menu display:inline-flex because landing.css
+   loads after utilities, so hide them explicitly at desktop widths. */
+@media (min-width: 768px) {
+  .rm-app-menu { display: none !important; }
+  .rm-app-back { display: none !important; }
+}
+
 /* Sticky mobile CTA — only on small screens, below the content */
 @media (max-width: 639px) {
   .sticky-mobile-cta { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }

@@ -117,7 +117,7 @@ export function ContractsView() {
           <Alert tone={health?.anchoring.configured ? "success" : "warning"} title="Anchoring">
             {health?.anchoring.configured
               ? "A signing key is present, so the indexer writes every batch root on chain."
-              : "No signing key is present in this process, so no new roots are written. Batches anchored earlier remain checkable. Set PORTALDOT_MNEMONIC and restart the indexer to resume anchoring."}
+              : "This page reads the contract live on every load. A signing key lets the indexer write new roots; until then every root here is still checkable in the console."}
           </Alert>
         </div>
 
