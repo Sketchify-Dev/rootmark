@@ -13,7 +13,7 @@ export default function ContractsPage() {
   return (
     <>
       <Breadcrumbs items={[{ label: "Contracts" }]} />
-      <BreadcrumbJsonLd items={[{ name: "Home", url: "https://rootmark.portaldot.dev/" }, { name: "Contracts", url: "https://rootmark.portaldot.dev/contracts" }]} />
+      <BreadcrumbJsonLd items={[{ name: "Home", url: "https://rootmark-seven.vercel.app/" }, { name: "Contracts", url: "https://rootmark-seven.vercel.app/contracts" }]} />
       <ContractsView />
     </>
   );

@@ -24,8 +24,8 @@ export default function AboutPage() {
         <Breadcrumbs items={[{ label: "About" }]} />
         <BreadcrumbJsonLd
           items={[
-            { name: "Home", url: "https://rootmark.portaldot.dev/" },
-            { name: "About", url: "https://rootmark.portaldot.dev/about" },
+            { name: "Home", url: "https://rootmark-seven.vercel.app/" },
+            { name: "About", url: "https://rootmark-seven.vercel.app/about" },
           ]}
         />
         <main>

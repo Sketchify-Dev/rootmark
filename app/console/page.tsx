@@ -13,7 +13,7 @@ export default function ConsolePage() {
   return (
     <>
       <Breadcrumbs items={[{ label: "Console" }]} />
-      <BreadcrumbJsonLd items={[{ name: "Home", url: "https://rootmark.portaldot.dev/" }, { name: "Console", url: "https://rootmark.portaldot.dev/console" }]} />
+      <BreadcrumbJsonLd items={[{ name: "Home", url: "https://rootmark-seven.vercel.app/" }, { name: "Console", url: "https://rootmark-seven.vercel.app/console" }]} />
       <ConsoleView />
     </>
   );

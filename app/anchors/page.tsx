@@ -13,7 +13,7 @@ export default function AnchorsPage() {
   return (
     <>
       <Breadcrumbs items={[{ label: "Anchors" }]} />
-      <BreadcrumbJsonLd items={[{ name: "Home", url: "https://rootmark.portaldot.dev/" }, { name: "Anchors", url: "https://rootmark.portaldot.dev/anchors" }]} />
+      <BreadcrumbJsonLd items={[{ name: "Home", url: "https://rootmark-seven.vercel.app/" }, { name: "Anchors", url: "https://rootmark-seven.vercel.app/anchors" }]} />
       <AnchorsView />
     </>
   );

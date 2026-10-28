@@ -27,4 +27,4 @@ Each record is normalised to one EventRecord { vm, chainId, blockNumber, blockHa
 
 Built for Portaldot Hacker House 2026, Track 1 Modular Cloud and Middleware. No fake metrics, no mock roots, no generated reviews. Every count on the page is a real count from the index.
 
-Repo: set your own remote. Update https://rootmark.portaldot.dev to your real domain in app/layout.tsx metadataBase, app/robots.ts and app/sitemap.ts.
+Repo: set your own remote. Update https://rootmark-seven.vercel.app to your real domain in app/layout.tsx metadataBase, app/robots.ts and app/sitemap.ts.

@@ -173,7 +173,7 @@ export function ConsoleView() {
           </div>
         ) : null}
 
-        <div className="rm-rise">
+        <div>
           <QueryPanel
             filters={filters}
             onChange={(next) => { setFilters(next); setErrors(validateFilters(next)); }}
@@ -193,7 +193,7 @@ export function ConsoleView() {
         </div>
 
         <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_400px]">
-          <div className="rm-rise min-w-0">
+          <div className="min-w-0">
             <ResultsTable
               items={items}
               status={listState}

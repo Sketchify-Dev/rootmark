@@ -75,7 +75,7 @@ export function AnchorsView() {
             {items.map((batch, index) => (
               <article
                 key={batch.id}
-                className="rm-anchor-card rm-rise"
+                className="rm-anchor-card"
                 style={{ transitionDelay: `${Math.min(index, 6) * 60}ms` } as React.CSSProperties}
               >
                 <div className="flex items-start justify-between gap-2">
