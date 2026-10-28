@@ -149,6 +149,57 @@ export PORTALDOT_MNEMONIC="word word word ..."
 npm run setup
 ```
 
+## Running it locally for judges
+
+Everything below assumes a fresh clone and Node 22 or newer.
+
+1. Install and verify the build:
+   ```bash
+   npm install
+   npm run typecheck
+   npm test
+   npm run build
+   ```
+
+2. Index the live V3 testnet (unsigned, no key needed):
+   ```bash
+   npm run indexer
+   # in another terminal
+   npm run dev
+   # open http://localhost:3000
+   ```
+   The console at `/console` re-queries on load and `/anchors` loads its batches on
+   load, so records and batches appear without pressing anything.
+
+3. To exercise the full signed path (new records plus anchoring), fund a mnemonic:
+   ```bash
+   PORTALDOT_MNEMONIC="word word word ..." npm run wallet
+   # request tPOT for the printed gas account and native sr25519 address
+   PORTALDOT_MNEMONIC="..." npm run indexer
+   ```
+   With a key present the indexer anchors each full batch to `PortalAnchor` on the
+   EVM side. To produce a new record on demand:
+   ```bash
+   PORTALDOT_MNEMONIC="..." npm run emit -- --note "judge run" --value 7
+   ```
+   The indexer picks the `Ping` up within ~6 seconds, `/console` shows it, and
+   `/anchors` shows the new batch once 25 records accumulate (or 90 seconds pass).
+
+4. Verify any record end to end:
+   ```bash
+   npm run verify:proof -- 42
+   # or press Verify on any row in /console
+   ```
+   The proof panel recomputes the Merkle root in the browser and compares it with
+   the root read back from `PortalAnchor` storage.
+
+5. Optional: stand up a local chain that mirrors the testnet chain id (no tokens):
+   ```bash
+   npm run local-evm   # ganache on 8545, deploys anchor + emitter, sends 3 Pings
+   PORTALIDX_EVM_RPC=http://127.0.0.1:8545 PORTALDOT_MNEMONIC="test test test test test test test test test test test junk" npm run indexer
+   PORTALIDX_EVM_RPC=http://127.0.0.1:8545 npm run dev
+   ```
+
 ## API
 
 | Method | Path | Purpose |

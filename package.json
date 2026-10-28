@@ -17,7 +17,8 @@
     "verify:proof": "tsx scripts/verify-proof.mjs",
     "build:wasm": "cargo contract build --release --manifest-path contracts/wasm/anchor/Cargo.toml",
     "setup": "node scripts/setup.mjs",
-    "screenshot": "node scripts/screenshot.mjs"
+    "screenshot": "node scripts/screenshot.mjs",
+    "emit": "tsx scripts/emit.mjs"
   },
   "dependencies": {
     "@polkadot/api": "^17.0.2",
