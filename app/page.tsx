@@ -435,7 +435,7 @@ async function LandingContent() {
   const data = await getLandingData();
   const dbAnchored = data.anchors.filter((a) => a.status === "anchored").length;
   const onChainAnchors = (data as { onChainAnchors?: number }).onChainAnchors ?? 0;
-  const anchoredCount = dbAnchored > 0 ? dbAnchored : onChainAnchors;
+  const anchoredCount = Math.max(dbAnchored, onChainAnchors);
   return (
     <LandingClient
       total={data.total}

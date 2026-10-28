@@ -61,7 +61,7 @@ export function Shell({ children }: { children: ReactNode }) {
           </nav>
           <div className="flex items-center gap-2">
             <span className="rm-app-chain hidden sm:inline-flex">chain 420420777 · tPOT</span>
-            <Link href="/" className="rm-app-back hidden sm:inline-flex">Landing →</Link>
+            <Link href="/" className="rm-app-back inline-flex md:hidden">Landing →</Link>
             <button
               type="button"
               onClick={() => setOpen(true)}
