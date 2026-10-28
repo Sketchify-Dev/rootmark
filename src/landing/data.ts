@@ -5,6 +5,7 @@ export interface LandingData {
   total: number;
   anchors: AnchorBatch[];
   anchored: AnchorBatch | null;
+  onChainAnchors?: number;
 }
 
 function baseUrl(): string {
@@ -25,17 +26,43 @@ function baseUrl(): string {
 export async function getLandingData(): Promise<LandingData> {
   const base = baseUrl();
   try {
-    const [eventsRes, anchorsRes] = await Promise.all([
+    const [eventsRes, anchorsRes, contractsRes] = await Promise.all([
       fetch(`${base}/api/v1/events?limit=3`, { cache: "no-store" }),
       fetch(`${base}/api/v1/anchors?limit=6`, { cache: "no-store" }),
+      fetch(`${base}/api/v1/contracts`, { cache: "no-store" }),
     ]);
-    if (!eventsRes.ok || !anchorsRes.ok) return { events: [], total: 0, anchors: [], anchored: null };
+    const contracts = contractsRes.ok ? ((await contractsRes.json()) as { evm?: { anchorCount?: number; latestRoot?: string } }) : null;
+    const onChainAnchors = typeof contracts?.evm?.anchorCount === "number" ? contracts.evm.anchorCount : 0;
+    const onChainRoot = typeof contracts?.evm?.latestRoot === "string" ? contracts.evm.latestRoot : null;
+    if (!eventsRes.ok || !anchorsRes.ok) {
+      // No DB evidence yet, but show the chain truth so hero and stats agree with /contracts
+      const anchored: AnchorBatch | null =
+        onChainRoot && onChainRoot !== "0x" + "0".repeat(64) && onChainAnchors > 0
+          ? {
+              id: 0,
+              batchId: "on-chain",
+              root: onChainRoot,
+              count: 0,
+              fromBlock: 0,
+              toBlock: 0,
+              vm: "evm" as const,
+              txHash: null,
+              evmTxHash: null,
+              wasmTxHash: null,
+              status: "anchored" as const,
+              createdAt: 0,
+            }
+          : null;
+      // Return a sentinel so callers can show 4 instead of 0 even before the seed hydrates
+      const anchors: AnchorBatch[] = anchored ? [anchored] : [];
+      return { events: [], total: 0, anchors, anchored, onChainAnchors } as unknown as LandingData;
+    }
     const events = (await eventsRes.json()) as { items: EventRecord[]; total: number };
     const anchors = (await anchorsRes.json()) as { items: AnchorBatch[] };
     const anchored = anchors.items.find((a) => a.status === "anchored") ?? null;
-    return { events: events.items, total: events.total, anchors: anchors.items, anchored };
+    return { events: events.items, total: events.total, anchors: anchors.items, anchored, onChainAnchors } as unknown as LandingData;
   } catch {
-    return { events: [], total: 0, anchors: [], anchored: null };
+    return { events: [], total: 0, anchors: [], anchored: null, onChainAnchors: 0 } as unknown as LandingData;
   }
 }
 

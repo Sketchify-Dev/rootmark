@@ -433,11 +433,14 @@ export default function LandingPage() {
 
 async function LandingContent() {
   const data = await getLandingData();
+  const dbAnchored = data.anchors.filter((a) => a.status === "anchored").length;
+  const onChainAnchors = (data as { onChainAnchors?: number }).onChainAnchors ?? 0;
+  const anchoredCount = dbAnchored > 0 ? dbAnchored : onChainAnchors;
   return (
     <LandingClient
       total={data.total}
       anchored={data.anchored}
-      anchoredCount={data.anchors.filter((a) => a.status === "anchored").length}
+      anchoredCount={anchoredCount}
     />
   );
 }

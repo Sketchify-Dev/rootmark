@@ -2,6 +2,7 @@ import { DatabaseSync } from "node:sqlite";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { DB_PATH } from "./config";
+import { SEED_EVENTS, SEED_ANCHORS, SEED_META } from "./seed";
 import type { AnchorBatch, EventQuery, EventRecord, Vm } from "./types";
 
 /**
@@ -77,6 +78,26 @@ function migrate(handle: DatabaseSync): void {
       value TEXT NOT NULL
     );
   `);
+  // Seed the ephemeral DB on Vercel (writes once per cold start, idempotent)
+  try {
+    const existing = handle.prepare("SELECT COUNT(*) as n FROM events").get() as { n: number } | undefined;
+    if ((existing?.n ?? 0) === 0 && SEED_EVENTS.length > 0) {
+      const insertEvent = handle.prepare(`INSERT INTO events (vm, chain_id, block_number, block_hash, tx_hash, contract, event, args, leaf, timestamp, batch_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+      const insertAnchor = handle.prepare(`INSERT INTO anchors (batch_id, root, count, from_block, to_block, vm, tx_hash, evm_tx_hash, wasm_tx_hash, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+      handle.exec("BEGIN");
+      for (const e of SEED_EVENTS as unknown as Record<string, unknown>[]) {
+        insertEvent.run(e.vm as string, e.chainId as number, e.blockNumber as number, e.blockHash as string, e.txHash as string, (e.contract as string | null) ?? null, e.event as string, JSON.stringify((e.args ?? {}) as Record<string, unknown>), e.leaf as string, e.timestamp as number, ((e as { batchId?: string }).batchId ?? null) as string | null);
+      }
+      for (const a of SEED_ANCHORS as unknown as Record<string, unknown>[]) {
+        insertAnchor.run(a.batchId as string, a.root as string, a.count as number, a.fromBlock as number, a.toBlock as number, a.vm as string, (a.txHash as string | null) ?? null, (a.evmTxHash as string | null) ?? null, (a.wasmTxHash as string | null) ?? null, a.status as string, a.createdAt as number);
+      }
+      for (const m of SEED_META) {
+        handle.prepare("INSERT OR IGNORE INTO meta (key, value) VALUES (?, ?)").run(m.key, m.value);
+      }
+      handle.exec("COMMIT");
+    }
+  } catch {}
+
 }
 
 export interface NewEvent {
