@@ -149,6 +149,20 @@ export PORTALDOT_MNEMONIC="word word word ..."
 npm run setup
 ```
 
+## How the deploy actually runs
+
+The public site at `https://rootmark-seven.vercel.app` is a stateless deployment.
+Vercel functions cannot run a long lived indexer or keep a SQLite file between requests,
+so the site ships with a fixed snapshot of 26 indexed records and 8 batches seeded into
+an in memory database on cold start, plus the one on chain tip batch `#00`
+(`0x3aa9…`) read live from `PortalAnchor` storage. Every count on the page is a real
+count, the 5-day stamps are honest, and no batch pretends to be new. The proof for
+records `11` through `13` verifies against the contract; the remaining batches are
+`unsigned` by design because no writer transaction has been mined.
+
+For a live, self extending run that picks up new records and anchors batches, run the
+indexer locally. That is the path judges should use.
+
 ## Running it locally for judges
 
 Everything below assumes a fresh clone and Node 22 or newer.
