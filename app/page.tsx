@@ -384,6 +384,7 @@ function Footer() {
           <Link href="/sitemap.xml" className="underline underline-offset-4 decoration-white/20 hover:decoration-white/60">Sitemap</Link>
           <Link href="/llms.txt" className="underline underline-offset-4 decoration-white/20 hover:decoration-white/60">llms.txt</Link>
           <Link href="/robots.txt" className="underline underline-offset-4 decoration-white/20 hover:decoration-white/60">robots.txt</Link>
+          <Link href="/pitch-deck" className="underline underline-offset-4 decoration-white/20 hover:decoration-white/60">Pitch deck</Link>
           <a href="https://github.com/Sketchify-Dev/rootmark" className="underline underline-offset-4 decoration-white/20 hover:decoration-white/60">GitHub</a>
         </div>
         <p>Built for the Portaldot Hacker House 2026.</p>
