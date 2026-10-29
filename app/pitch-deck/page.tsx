@@ -5,7 +5,6 @@ export const metadata = { title: "Rootmark — Pitch Deck", description: "Portal
 
 export default function PitchDeckPage() {
   const html = readFileSync(resolve(process.cwd(), "public/pitch-deck.html"), "utf8");
-  // Strip the outer html/body so it renders inside the Next shell without duplicating them
   const inner = html.replace(/^[\s\S]*?<body[^>]*>/i, "").replace(/<\/body>[\s\S]*$/i, "");
   const style = html.match(/<style[^>]*>([\s\S]*?)<\/style>/i)?.[1] ?? "";
   return (
