@@ -17,8 +17,11 @@
   .mark{width:40px;height:40px;border-radius:10px;overflow:hidden;display:block;box-shadow:0 8px 20px rgba(4,26,85,0.18)}
   .brand{font-weight:950;letter-spacing:-0.04em;font-size:18px;line-height:1}
   .sub{color:var(--muted);font-size:13px}
-  .actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
-  .btn{appearance:none;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:10px 16px;font-weight:750;font-size:13px;cursor:pointer;letter-spacing:-0.01em}
+  .brandline{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+  .brandstack{min-width:0;flex:1}
+  .actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0}
+  .btn{appearance:none;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:10px 16px;font-weight:750;font-size:13px;cursor:pointer;letter-spacing:-0.01em;white-space:nowrap}
+  @media (max-width:640px){.topbar{border-radius:18px;padding:12px;gap:10px}.actions{width:100%;justify-content:flex-end}.sub{font-size:11px;line-height:1.35}}
   .btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
   .btn:active{transform:translateY(1px)}
   .slides{display:grid;gap:20px}
@@ -70,11 +73,11 @@
 <body>
   <div class="deck">
     <div class="topbar">
-      <a href="/" aria-label="Rootmark home" class="mark"><svg width="40" height="40" viewBox="0 0 512 512" role="img" xmlns="http://www.w3.org/2000/svg"><rect width="512" height="512" rx="112" fill="#062b8a"/><g opacity="0.07" stroke="white" stroke-width="1"><line x1="64" y1="384" x2="448" y2="384"/><line x1="64" y1="404" x2="448" y2="404"/></g><g fill="white"><path d="M 140 120 L 140 136 L 156 136 L 156 368 L 140 368 L 140 384 L 232 384 L 232 368 L 216 368 L 216 276 L 232 276 L 314 384 L 380 384 L 272 268 C 318 248 340 212 340 172 C 340 130 310 120 264 120 H 140 Z M 156 136 L 264 136 C 300 136 322 150 322 172 C 322 198 304 232 272 232 L 216 232 L 216 248 L 234 248 L 216 232 L 216 136 Z"/></g><path d="M 216 152 L 264 152 C 290 152 304 160 304 172 C 304 192 290 216 272 216 L 216 216 Z" fill="#062b8a"/><circle cx="400" cy="400" r="48" fill="white"/><circle cx="400" cy="400" r="40" fill="#e6dbc7"/><circle cx="400" cy="400" r="7" fill="#062b8a" opacity="0.16"/><path d="M 386 400 L 393 410 L 414 390" fill="none" stroke="#062b8a" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <div class="brandline"><a href="/" aria-label="Rootmark home" class="mark"><svg width="40" height="40" viewBox="0 0 512 512" role="img" xmlns="http://www.w3.org/2000/svg"><rect width="512" height="512" rx="112" fill="#062b8a"/><g opacity="0.07" stroke="white" stroke-width="1"><line x1="64" y1="384" x2="448" y2="384"/><line x1="64" y1="404" x2="448" y2="404"/></g><g fill="white"><path d="M 140 120 L 140 136 L 156 136 L 156 368 L 140 368 L 140 384 L 232 384 L 232 368 L 216 368 L 216 276 L 232 276 L 314 384 L 380 384 L 272 268 C 318 248 340 212 340 172 C 340 130 310 120 264 120 H 140 Z M 156 136 L 264 136 C 300 136 322 150 322 172 C 322 198 304 232 272 232 L 216 232 L 216 248 L 234 248 L 216 232 L 216 136 Z"/></g><path d="M 216 152 L 264 152 C 290 152 304 160 304 172 C 304 192 290 216 272 216 L 216 216 Z" fill="#062b8a"/><circle cx="400" cy="400" r="48" fill="white"/><circle cx="400" cy="400" r="40" fill="#e6dbc7"/><circle cx="400" cy="400" r="7" fill="#062b8a" opacity="0.16"/><path d="M 386 400 L 393 410 L 414 390" fill="none" stroke="#062b8a" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
       <div>
         <div class="brand">Rootmark</div>
         <div class="sub">Portaldot Hacker House 2026 - Track 1 · Modular Cloud &amp; Middleware · Chain 420420777</div>
-      </div>
+      </div></div>
       <div class="actions">
         <button class="btn primary" onclick="window.print()">Save as PDF</button>
         <button class="btn" onclick="navigator.clipboard.writeText(location.href).then(()=>alert('Link copied'))">Copy link</button>
@@ -121,7 +124,7 @@
         <div class="pad">
           <div class="kicker">02 · Why Portaldot is essential</div>
           <h2>One chain, two execution environments, one root.</h2>
-          <p class="lead">Portaldot V3 is the only chain in this stack that runs ink! and EVM together, chain 420420777, with `test-evm-rpc-v3` and `test-node-v3` as the two doors into the same state. Rootmark is native to that design: tail both heads, normalize into one record, commit one root.</p>
+          <p class="lead">Portaldot V3 is the only chain in this stack that runs ink! and EVM together, chain 420420777, with <span class="mono" style="font-size:0.95em;background:rgba(255,255,255,0.12);padding:1px 6px;border-radius:6px;word-break:break-all">test-evm-rpc-v3</span> and <span class="mono" style="font-size:0.95em;background:rgba(255,255,255,0.12);padding:1px 6px;border-radius:6px;word-break:break-all">test-node-v3</span> as the two doors into the same state. Rootmark is native to that design: tail both heads, normalize into one record, commit one root.</p>
           <div class="grid g2" style="margin-top:14px">
             <div class="card"><b>What Portaldot gives us</b><div class="muted">A single blockspace where a batch can cover both VMs. The anchor contract is the settlement for truth, not for value.</div></div>
             <div class="card"><b>What Rootmark gives Portaldot</b><div class="muted">A reusable query plus proof layer any team can point an app at, without reindexing both VMs themselves.</div></div>
