@@ -97,10 +97,16 @@ export function ConsoleView() {
   }, [nextCursor]);
 
   const firstQuery = useRef(false);
+  const runRef = useRef(run);
+  const appliedRef = useRef(appliedFilters);
+  useEffect(() => { runRef.current = run; }, [run]);
+  useEffect(() => { appliedRef.current = appliedFilters; }, [appliedFilters]);
   useEffect(() => {
     if (firstQuery.current) return;
     firstQuery.current = true;
     run(EMPTY_FILTERS);
+    const timer = window.setInterval(() => runRef.current(appliedRef.current), 30_000);
+    return () => window.clearInterval(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

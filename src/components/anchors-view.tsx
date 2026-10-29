@@ -28,6 +28,8 @@ export function AnchorsView() {
     if (mounted.current) return;
     mounted.current = true;
     load();
+    const timer = window.setInterval(load, 30_000);
+    return () => window.clearInterval(timer);
   }, []);
 
   return (
