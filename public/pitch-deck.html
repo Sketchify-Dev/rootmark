@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rootmark — Pitch Deck</title>
+<style>
+  :root{
+    --bg:#e6dbc7; --surface:#ddd0b9; --field:#efe6d3; --ink:#062b8a; --muted:#3a5aa8;
+    --line:rgba(6,43,138,0.18); --navy:#041a55; --sand:#f2ecdd;
+    --r-xl:22px; --r:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:ui-sans-system, -apple-system, Segoe UI, Inter, Helvetica, Arial, sans-serif}
+  .deck{max-width:1120px;margin:0 auto;padding:28px 18px 40px}
+  .topbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+  .mark{width:40px;height:40px;border-radius:10px;background:var(--ink);display:grid;place-items:center;color:#fff;font-weight:900;letter-spacing:-0.04em;box-shadow:0 8px 20px rgba(4,26,85,0.25)}
+  .brand{font-weight:900;letter-spacing:-0.03em}
+  .sub{color:var(--muted);font-size:13px}
+  .actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .btn{appearance:none;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:10px 14px;font-weight:700;font-size:13px;cursor:pointer}
+  .btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .btn:active{transform:translateY(1px)}
+  .slides{display:grid;gap:18px}
+  .slide{background:rgba(255,255,255,0.88);border:1px solid var(--line);border-radius:var(--r-xl);overflow:hidden;box-shadow:0 10px 30px rgba(4,26,85,0.08)}
+  .slide.dark{background:var(--navy);color:var(--sand);border-color:rgba(242,236,221,0.14)}
+  .slide.dark .muted{color:rgba(242,236,221,0.72)}
+  .slide.dark .line{border-color:rgba(242,236,221,0.14)}
+  .pad{padding:22px}
+  .kicker{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);font-weight:800}
+  .slide.dark .kicker{color:rgba(242,236,221,0.62)}
+  h1,h2{margin:8px 0 0;letter-spacing:-0.03em;line-height:0.95}
+  h1{font-size:clamp(28px,4.2vw,52px);font-weight:950}
+  h2{font-size:clamp(20px,2.6vw,30px);font-weight:900}
+  .lead{margin:10px 0 0;color:rgba(6,43,138,0.78);font-size:clamp(13px,1.5vw,16px);line-height:1.55;max-width:76ch}
+  .slide.dark .lead{color:rgba(242,236,221,0.78)}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr 1fr 1fr}
+  @media (max-width:860px){ .g2,.g3{grid-template-columns:1fr} }
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}
+  .slide.dark .card{background:rgba(255,255,255,0.06);border-color:rgba(242,236,221,0.14)}
+  .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+  .pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;border:1px solid var(--line);background:#fff;padding:6px 10px;font-size:12px;font-weight:800}
+  .slide.dark .pill{background:rgba(242,236,221,0.1);border-color:rgba(242,236,221,0.16);color:var(--sand)}
+  .line{border-top:1px solid var(--line)}
+  .num{width:28px;height:28px;border-radius:999px;display:grid;place-items:center;background:var(--ink);color:#fff;font-weight:900;font-size:12px;flex:0 0 auto}
+  .muted{color:rgba(6,43,138,0.7);font-size:13px;line-height:1.55}
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:13px}
+  .kv b{letter-spacing:-0.02em}
+  .arch{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .arch .box{border:1px dashed var(--line);border-radius:14px;padding:12px;background:rgba(255,255,255,0.6)}
+  .arch b{display:block;margin-bottom:6px}
+  .arch code{font-size:12px}
+  .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .cta a{color:inherit}
+  .small{font-size:12px}
+  .foot{opacity:0.7;font-size:12px;margin-top:10px}
+  @media print{
+    .topbar .actions{display:none}
+    .deck{padding:0}
+    .slide{break-inside:avoid;box-shadow:none}
+    body{background:#fff}
+  }
+</style>
+</head>
+<body>
+  <div class="deck">
+    <div class="topbar">
+      <div class="mark">R</div>
+      <div>
+        <div class="brand">Rootmark</div>
+        <div class="sub">Portaldot Hacker House 2026 — Track 1 · Modular Cloud &amp; Middleware · Chain 420420777</div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" onclick="window.print()">Save as PDF</button>
+        <button class="btn" onclick="navigator.clipboard.writeText(location.href).then(()=>alert('Link copied'))">Copy link</button>
+      </div>
+    </div>
+
+    <div class="slides">
+
+      <!-- 1 Cover -->
+      <section class="slide dark">
+        <div class="pad">
+          <div class="kicker">Portaldot V3 · Hackathon build</div>
+          <h1>Rootmark</h1>
+          <p class="lead" style="max-width:62ch">Verifiable middleware for the Portaldot chain. One query surface across EVM and ink!, every record carries a Merkle proof checked against an on-chain root.</p>
+          <div class="cta">
+            <span class="pill">Live · rootmark-seven.vercel.app</span>
+            <span class="pill">GitHub · Sketchify-Dev/rootmark</span>
+            <span class="pill">Chain 420420777</span>
+          </div>
+          <div class="grid g3" style="margin-top:16px">
+            <div class="card"><b>What it is</b><div class="muted">Middleware, not a dApp. Any app can query without running its own indexer, and check the answer without trusting it.</div></div>
+            <div class="card"><b>Where it lives</b><div class="muted">Next.js API plus indexer. Anchor on EVM `PortalAnchor`, Emitter for test flow, WASM anchor ready.</div></div>
+            <div class="card"><b>Why now</b><div class="muted">Portaldot V3 exposes one chain in two VMs. No shared index, no checkable read. Rootmark fills that gap.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2 Problem -->
+      <section class="slide">
+        <div class="pad">
+          <div class="kicker">01 · Problem addressed</div>
+          <h2>The chain is split, the reads are trusted.</h2>
+          <div class="grid g3" style="margin-top:14px">
+            <div class="card"><b>Two VMs, two event worlds</b><div class="muted">Solidity logs on the EVM side, typed ink! events on the WASM side. No shared shape, no shared query.</div></div>
+            <div class="card"><b>No checkable index</b><div class="muted">Apps read from someone's database. If that database invents a transfer, the client has no way to know.</div></div>
+            <div class="card"><b>Middleware is the bottleneck</b><div class="muted">Track 1 exists because cloud and middleware decide whether the chain is usable. Right now, the usable path is trust.</div></div>
+          </div>
+          <p class="lead">Result: builders either run a bespoke indexer for one VM, or ship an app that cannot prove what it shows.</p>
+        </div>
+      </section>
+
+      <!-- 3 Why Portaldot -->
+      <section class="slide dark">
+        <div class="pad">
+          <div class="kicker">02 · Why Portaldot is essential</div>
+          <h2>One chain, two execution environments, one root.</h2>
+          <p class="lead">Portaldot V3 is the only chain in this stack that runs ink! and EVM together, chain 420420777, with `test-evm-rpc-v3` and `test-node-v3` as the two doors into the same state. Rootmark is native to that design: tail both heads, normalize into one record, commit one root.</p>
+          <div class="grid g2" style="margin-top:14px">
+            <div class="card"><b>What Portaldot gives us</b><div class="muted">A single blockspace where a batch can cover both VMs. The anchor contract is the settlement for truth, not for value.</div></div>
+            <div class="card"><b>What Rootmark gives Portaldot</b><div class="muted">A reusable query plus proof layer any team can point an app at, without reindexing both VMs themselves.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 Architecture -->
+      <section class="slide">
+        <div class="pad">
+          <div class="kicker">03 · Architecture</div>
+          <h2>Tails both heads, proves every read.</h2>
+          <div class="arch" style="margin-top:14px">
+            <div class="box"><b>EVM head</b><span class="muted">eth_getBlockByNumber plus receipts, decoded against known ABIs, anonymous topics preserved.</span></div>
+            <div class="box"><b>WASM head</b><span class="muted">system.events at blockHash, typed decoding including `Anchored`.</span></div>
+          </div>
+          <div class="arch" style="margin-top:12px">
+            <div class="box"><b>Indexer</b><span class="muted">Normalize into <span class="mono">EventRecord { vm, chainId, blockNumber, blockHash, txHash, contract, event, args, leaf }</span>, hash leaf with keccak256(canonicalJson), build Merkle tree (duplicate last on odd), batch size 25, ready after 90s.</span></div>
+            <div class="box"><b>Anchor</b><span class="muted">Commit root per batchId to <span class="mono">PortalAnchor.anchor</span> on EVM and <span class="mono">anchor</span> on WASM. Read back with <span class="mono">getAnchor</span> or contract storage. Recompute in the browser with <span class="mono">applyProof</span>.</span></div>
+          </div>
+          <div class="card" style="margin-top:12px"><b>API plus Console</b><div class="muted"><span class="mono">GET /api/v1/events, /proof/:id, /anchors, /contracts, /filters, /health</span> · Console query plus Verify panel, Anchors batches, Contracts live state.</div></div>
+        </div>
+      </section>
+
+      <!-- 5 Proof -->
+      <section class="slide dark">
+        <div class="pad">
+          <div class="kicker">04 · Proof of product functionality</div>
+          <h2>Live on V3, verifiable in one click.</h2>
+          <div class="grid g2" style="margin-top:14px">
+            <div class="card"><b>On-chain</b><div class="muted"><span class="mono">PortalAnchor 0x92B79C5cD9CC8235e3e2718a739BE825e2bd5430</span><br>deploy tx <span class="mono">0x6e33aa…2923</span> block 204392 · Emitter <span class="mono">0x178B9ED9…C31E</span> · first anchored batch <span class="mono">0xa66a8338…</span> root <span class="mono">0x624facad…</span> anchor tx <span class="mono">0xf1cb…6cc8</span> block 204768</div></div>
+            <div class="card"><b>Live site</b><div class="muted">rootmark-seven.vercel.app — landing numbers, <span class="mono">/console</span> query plus Verify, <span class="mono">/anchors</span> batches, <span class="mono">/contracts</span> live reads, <span class="mono">/api/v1/health</span> plus <span class="mono">/proof/:id</span>. Try record 11 to 13, each returns <span class="mono">verified: true</span> against contract storage.</div></div>
+          </div>
+          <div class="grid g3" style="margin-top:12px">
+            <div class="card"><b>Reproduce</b><div class="muted"><span class="mono">npm run typecheck && npm test && npm run build</span> — 38 tests, honest seed, ledger-paper premium UI.</div></div>
+            <div class="card"><b>Judge path</b><div class="muted"><span class="mono">PORTALDOT_MNEMONIC="..." npm run indexer</span> then <span class="mono">npm run emit -- --note "judge run"</span> plus <span class="mono">npm run dev</span>. New Ping appears within seconds, new batch anchors on chain.</div></div>
+            <div class="card"><b>Local mirror</b><div class="muted"><span class="mono">npm run local-evm</span> — ganache chain 420420777, default mnemonic junk, no faucet needed.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6 Demo -->
+      <section class="slide">
+        <div class="pad">
+          <div class="kicker">05 · Live walk, 30 seconds</div>
+          <h2>Query, inspect, verify.</h2>
+          <div class="grid g3" style="margin-top:14px">
+            <div class="card"><div class="num">1</div><b>Query</b><div class="muted">Filter by vm, contract, event, address, block range. Cursor paging. One shape across both VMs.</div></div>
+            <div class="card"><div class="num">2</div><b>Inspect</b><div class="muted">Open any row. Leaf hash, sibling path, batch root, block span, tx link.</div></div>
+            <div class="card"><div class="num">3</div><b>Verify</b><div class="muted">Panel recomputes the root in the browser and compares with `PortalAnchor` storage. Green means the indexer did not invent it.</div></div>
+          </div>
+          <p class="lead">If the proof fails, the UI says so. No hidden fallback.</p>
+        </div>
+      </section>
+
+      <!-- 7 Honest limits -->
+      <section class="slide">
+        <div class="pad">
+          <div class="kicker">06 · What is real and what is not</div>
+          <h2>Honest about the deploy.</h2>
+          <div class="grid g2" style="margin-top:14px">
+            <div class="card"><b>What the live site is</b><div class="muted">Stateless on Vercel. Ships a fixed snapshot of 26 records and 8 batches seeded on cold start, plus the on-chain-tip batch `#00` (`0x3aa9…`, 4 records) read live from `PortalAnchor`. Every count is real, dates are real, proof 11 to 13 is anchored.</div></div>
+            <div class="card"><b>What needs a local run</b><div class="muted">Picking up new chain records and writing new roots. That is `npm run indexer` with a funded key, by design. Vercel functions cannot keep SQLite between requests, so anchoring locally is the honest path.</div></div>
+          </div>
+          <p class="lead">No fake metrics, no mock roots, no generated reviews. The pending batches are `unsigned` because no writer transaction has been mined, not hidden.</p>
+        </div>
+      </section>
+
+      <!-- 8 Roadmap -->
+      <section class="slide dark">
+        <div class="pad">
+          <div class="kicker">07 · Why we keep building</div>
+          <h2>From demo to shared service.</h2>
+          <div class="grid g3" style="margin-top:14px">
+            <div class="card"><b>Durable index</b><div class="muted">Move off local SQLite to a shared store (Turso or Neon) so the public site self-extends. One cron plus one writer, same Merkle pipeline.</div></div>
+            <div class="card"><b>Finality plus reorgs</b><div class="muted">Lag by finality, track reorgs, mark affected batches. Fine on a quiet testnet, required on a busy chain.</div></div>
+            <div class="card"><b>Client SDK</b><div class="muted">Publish `verify(record, proof, onChainRoot)` for any frontend, plus typed filters for the API.</div></div>
+          </div>
+          <div class="grid g2" style="margin-top:12px">
+            <div class="card"><b>WASM anchor live</b><div class="muted">Deploy the ink! anchor once the native account is funded, anchor both sides per batch.</div></div>
+            <div class="card"><b>Zero-trust reads by default</b><div class="muted">Default all reads to verified. Cache roots, not trust.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9 Ask -->
+      <section class="slide">
+        <div class="pad">
+          <div class="kicker">08 · Ask</div>
+          <h2>Support to make this the shared layer.</h2>
+          <p class="lead">We built the piece Track 1 is missing: a query layer you can check. With continued support we make it durable, handle finality, and ship the WASM anchor plus SDK so every Portaldot team gets verifiable reads without running their own indexer.</p>
+          <div class="kv"><div>What we need</div><div><b>Testnet runway plus review time with the Portaldot team</b> — to set the durable store, finalize WASM anchoring, and align the proof shape with what ecosystem clients need.</div></div>
+          <div class="kv"><div>What you get</div><div><b>A public good for the chain.</b> One endpoint, one proof format, any app benefits.</div></div>
+        </div>
+      </section>
+
+      <!-- 10 End -->
+      <section class="slide dark">
+        <div class="pad">
+          <div class="kicker">09 · Links</div>
+          <h2>Everything is one click away.</h2>
+          <div class="grid g2" style="margin-top:14px">
+            <div class="card"><b>Live</b><div class="muted"><span class="mono">https://rootmark-seven.vercel.app</span><br>plus <span class="mono">/console</span> <span class="mono">/anchors</span> <span class="mono">/contracts</span> <span class="mono">/api/v1/health</span></div></div>
+            <div class="card"><b>Code</b><div class="muted"><span class="mono">https://github.com/Sketchify-Dev/rootmark</span><br>master, MIT, `contracts/deployments.json` is the source of truth</div></div>
+          </div>
+          <div class="card" style="margin-top:12px"><b>Run it</b><div class="muted"><span class="mono">npm install && npm run typecheck && npm test && npm run build</span> · <span class="mono">npm run wallet</span> · <span class="mono">PORTALDOT_MNEMONIC="..." npm run indexer</span> · <span class="mono">npm run dev</span></div></div>
+          <p class="foot">Portaldot Hacker House 2026 · Track 1 · Team Sketchify · Rootmark — verifiable middleware, the ruled sheet is older than the chain, the check is new.</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</body>
+</html>
