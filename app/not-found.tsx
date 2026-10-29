@@ -11,8 +11,8 @@ export default function NotFound() {
           The address you asked for has no record. Use the console to query the index, or check the anchored batches.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <Link href="/console" className="rm-hero-cta !bg-[var(--rm-ink)] !text-[#f2ecdd]">Open console</Link>
-          <Link href="/" className="rm-hero-arrow !border-[var(--rm-ink)] !text-[var(--rm-ink)] w-auto px-4 gap-2">Back to landing <span aria-hidden="true">→</span></Link>
+          <Link href="/console" className="inline-flex items-center justify-center rounded-full bg-[var(--rm-ink)] px-5 py-3 text-[14px] font-semibold text-[#f2ecdd]">Open console</Link>
+          <Link href="/" className="inline-flex items-center justify-center gap-2 rounded-full border border-[var(--rm-ink)] bg-transparent px-5 py-3 text-[14px] font-semibold text-[var(--rm-ink)]">Back to landing <span aria-hidden="true">→</span></Link>
         </div>
         <p className="mt-8 text-[12px] opacity-50">chain 420420777 · if you followed a proof link, the record may not be indexed yet.</p>
       </div>
