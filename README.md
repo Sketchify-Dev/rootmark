@@ -15,6 +15,8 @@ anchor contract holds. If the indexer invents a record, the proof fails.
 
 Built for the Portaldot Hacker House 2026, track 1, Modular Cloud and Middleware. Pages: `/` landing, `/about` why it exists, `/console` query and verify, `/anchors` batches, `/contracts` live state, `/privacy` note — full map in `public/llms.txt` and `/sitemap.xml`.
 
+Demo video (30 s, real screens, cursor clicks Verify): https://youtu.be/HhubgdyP3U8
+
 ## What it does
 
 - Tails the EVM endpoint and the substrate node at the same time and normalises both into one
