@@ -307,7 +307,7 @@ function Faq() {
     },
     {
       q: "Is this live on the Portaldot testnet?",
-      a: "The indexer reads the live V3 testnet. On-chain anchoring needs a funded wallet; until funding lands, the console shows real indexed records with honest unsigned status, and the rehearsal chain proves the full anchored path end to end.",
+      a: "Yes. The indexer reads the live V3 testnet and PortalAnchor holds 4 real roots: three Ping batches from blocks 204669 to 204686 plus the tip root 0x3aa9be70 mined in block 204947. The 8 snapshot batches on this page are unsigned by design, and the rehearsal chain proves the full anchored path end to end.",
     },
   ];
   return (

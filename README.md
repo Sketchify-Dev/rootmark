@@ -140,7 +140,12 @@ Live on the Portaldot V3 testnet, chain 420420777.
 | Portaldot V3 testnet, EVM | `Emitter` (test events) | `0x178B9ED9dB766d2ecda393ca0b780A643a12C31E` | `0x618ca3df675f64d0cf4cecfdc9a807c9df01031ed4a73dcf6c410720d2b759e2` (block 204668) |
 | Portaldot V3 testnet, WASM | `anchor` | not yet deployed | deploy with `npm run deploy:wasm` once the native account is funded |
 
-First anchored batch on V3: batch `0xa66a83386557...` root `0x624facad0b15...` covering 3 Ping records (blocks 204669 to 204672), anchor tx `0xf1cbeeb2352b60be23ae01497fd666eaf15e63139947a44a119c5602a26b6cc8` (block 204768). Verify any of records 11 to 13 at `GET /api/v1/proof/:id`; each returns `anchorStatus: anchored`, `onChainRootSource: contract-storage`, `verified: true`.
+All 4 anchors on `PortalAnchor`, read back from contract storage on 2026-11-02 (explorer: `0x92B79C5cD9CC8235e3e2718a739BE825e2bd5430`, chain 420420777):
+- batch `0xbbc2596f…36277a8c` root `0x7b32f4cb…dbaf448b`, count 7, blocks 204669 to 204672, tx `0x3c3659c1…` (block 204686)
+- batch `0x1f7a6813…834145d795` root `0x1ef46c61…05b07cc0`, count 1, block 204686, tx `0x7c5160f6…` (block 204709)
+- batch `0xa66a8338…85ae15b8a5` root `0x624facad…faca372f78`, count 3, blocks 204669 to 204672, tx `0xf1cbeeb2…` (block 204768)
+- batch `0x068e2ffd…0bf8f798` root `0x3aa9be70…c0c7f21083`, count 1, block 204924, tx `0x3f5a2af5…` (block 204947) - this is the live tip shown on the landing page.
+Separator note: snapshot records 11 to 13 belong to an unsigned batch (`0x30e538e6…`), so live `GET /api/v1/proof/11` returns `anchorStatus: unsigned`, `onChainRoot: null`, `verified: true` (local Merkle recompute passes). For a contract-backed proof, anchor the batch with `npm run indexer` plus a key, or check batch `0x068e2ffd…` with `getAnchor` directly.
 
 `contracts/deployments.json` is gitignored as live state; the addresses above are the public record. Reward payout address for this deployment: `5FjPSC5abXRfgNyNUQ5bQPiQC48mhk8PND7TCQovrdB1PpHt` (native sr25519).
 
@@ -158,9 +163,13 @@ Vercel functions cannot run a long lived indexer or keep a SQLite file between r
 so the site ships with a fixed snapshot of 26 indexed records and 8 batches seeded into
 an in memory database on cold start, plus the one on chain tip batch `#00`
 (`0x3aa9…`) read live from `PortalAnchor` storage. Every count on the page is a real
-count, the 5-day stamps are honest, and no batch pretends to be new. The proof for
-records `11` through `13` verifies against the contract; the remaining batches are
-`unsigned` by design because no writer transaction has been mined.
+count, and no batch pretends to be new. The 8 snapshot batches are `unsigned` by
+design: their batch ids were never written to the contract, so `GET /api/v1/proof/:id`
+returns `anchorStatus: unsigned` with `onChainRoot: null` and a locally recomputed root
+(`verified: true` means the Merkle math checks out, not that the chain agrees).
+The 4 real on-chain anchors live in `PortalAnchor` storage and are enumerated below;
+the tip row on the landing page is batch `0x068e2ffd…` root `0x3aa9…` mined in block
+204947 (tx `0x3f5a2af5…`), count 1.
 
 For a live, self extending run that picks up new records and anchors batches, run the
 indexer locally. That is the path judges should use.

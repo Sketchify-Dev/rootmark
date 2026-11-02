@@ -189,7 +189,7 @@
           <div class="kicker">06 · What is real and what is not</div>
           <h2>Honest about the deploy.</h2>
           <div class="grid g2" style="margin-top:14px">
-            <div class="card"><b>What the live site is</b><div class="muted">Stateless on Vercel. Ships a fixed snapshot of 26 records and 8 batches seeded on cold start, plus the on-chain-tip batch `#00` (`0x3aa9…`, 4 records) read live from `PortalAnchor`. Every count is real, dates are real, proof 11 to 13 is anchored.</div></div>
+            <div class="card"><b>What the live site is</b><div class="muted">Stateless on Vercel. Ships a fixed snapshot of 26 records and 8 batches seeded on cold start, plus the on-chain-tip batch `#00` (`0x3aa9…`, 4 records) read live from `PortalAnchor`. Every count is real. The 8 snapshot batches are unsigned by design; the 4 real roots live in PortalAnchor storage, tip 0x3aa9be70 in block 204947.</div></div>
             <div class="card"><b>What needs a local run</b><div class="muted">Picking up new chain records and writing new roots. That is `npm run indexer` with a funded key, by design. Vercel functions cannot keep SQLite between requests, so anchoring locally is the honest path.</div></div>
           </div>
           <p class="lead">No fake metrics, no mock roots, no generated reviews. The pending batches are `unsigned` because no writer transaction has been mined, not hidden.</p>
