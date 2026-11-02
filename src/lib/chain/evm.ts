@@ -132,6 +132,16 @@ export async function ethGetCode(address: string): Promise<string> {
   return rpc<string>("eth_getCode", [address, "latest"]);
 }
 
+/** Filtered log query against the EVM endpoint. Topics follow eth_getLogs. */
+export async function ethGetLogs(params: {
+  address?: string;
+  topics?: (string | null)[];
+  fromBlock?: string;
+  toBlock?: string;
+}): Promise<EvmLog[]> {
+  return rpc<EvmLog[]>("eth_getLogs", [params]);
+}
+
 /** 4 byte function selector, as hex. */
 export function functionSelector(signature: string): string {
   return keccak256Hex(utf8(signature)).slice(0, 10);

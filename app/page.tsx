@@ -307,7 +307,7 @@ function Faq() {
     },
     {
       q: "Is this live on the Portaldot testnet?",
-      a: "Yes. The indexer reads the live V3 testnet and PortalAnchor holds 4 real roots: three Ping batches from blocks 204669 to 204686 plus the tip root 0x3aa9be70 mined in block 204947. The 8 snapshot batches on this page are unsigned by design, and the rehearsal chain proves the full anchored path end to end.",
+      a: "Yes. The indexer reads the live V3 testnet and PortalAnchor holds 4 real roots. Three Ping batches cover records in blocks 204669 to 204686 (anchor txs mined in 204686, 204709 and 204768) plus the tip root 0x3aa9be70 covering block 204924 (anchor tx mined in 204947). The 8 snapshot batches on this page are unsigned by design, and the rehearsal chain proves the full anchored path end to end.",
     },
   ];
   return (

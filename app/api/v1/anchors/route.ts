@@ -1,6 +1,8 @@
 import { connection, NextResponse } from "next/server";
 import { listAnchorBatches } from "@/lib/api/queries";
 import { contractReport } from "@/lib/api/contracts";
+import { ethGetLogs } from "@/lib/chain/evm";
+import { keccak256Hex, utf8 } from "@/lib/hash";
 
 export async function GET(request: Request) {
   await connection();
@@ -23,16 +25,48 @@ export async function GET(request: Request) {
     const already = root ? items.some((a) => a.root.toLowerCase() === root.toLowerCase()) : true;
     if (root && root !== zero && typeof count === "number" && count > 0 && !already) {
       const now = Math.floor(Date.now() / 1000);
-      items.unshift({
-        id: 0,
+      // Fill the tip row from its Anchored event so the landing shows the real
+      // anchor tx, batch id, record range and count instead of "receipt pending".
+      let tip = {
         batchId: "on-chain-tip",
-        root,
         count,
         fromBlock: 0,
         toBlock: 0,
+        txHash: null as string | null,
+      };
+      try {
+        const sig = keccak256Hex(utf8("Anchored(bytes32,bytes32,uint64,uint64,uint64)"));
+        const logs = await ethGetLogs({
+          address: report.evm.address ?? undefined,
+          topics: [sig],
+          fromBlock: "0x1",
+          toBlock: "latest",
+        });
+        const match = logs.find(
+          (l) => l.topics?.[2]?.toLowerCase() === root.toLowerCase(),
+        );
+        if (match) {
+          const words = match.data.slice(2);
+          const n = (o: number) => Number(BigInt(`0x${words.slice(o, o + 64)}`));
+          tip = {
+            batchId: match.topics[1],
+            count: n(0) || count,
+            fromBlock: n(64),
+            toBlock: n(128),
+            txHash: match.transactionHash ?? null,
+          };
+        }
+      } catch {}
+      items.unshift({
+        id: 0,
+        batchId: tip.batchId,
+        root,
+        count: tip.count,
+        fromBlock: tip.fromBlock,
+        toBlock: tip.toBlock,
         vm: "evm",
-        txHash: null,
-        evmTxHash: null,
+        txHash: tip.txHash,
+        evmTxHash: tip.txHash,
         wasmTxHash: null,
         status: "anchored",
         createdAt: now,
