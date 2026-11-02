@@ -99,7 +99,7 @@ function Hero({
                   <p className="rm-float-kicker">Latest anchored batch</p>
                   <p className="rm-float-root rm-tnum">{shortHash(anchored.root, 12)}</p>
                   <p className="rm-float-meta rm-tnum">
-                    {anchored.count} records · blocks {anchored.fromBlock} to {anchored.toBlock}
+                    {anchored.count} {anchored.count === 1 ? "record" : "records"} · blocks {anchored.fromBlock} to {anchored.toBlock}
                   </p>
                   <p className="rm-float-meta rm-tnum">
                     tx {anchored.txHash ? shortHash(anchored.txHash, 10) : "receipt pending"}
